@@ -1,0 +1,57 @@
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    background-color: #fff5f5;
+    margin: 0;
+    padding: 20px;
+    color: #5a3e36;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+h1 {
+    color: #ff85a2;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+.cat {
+    font-size: 100px;
+    margin: 20px 0;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+.cat:hover {
+    transform: scale(1.1) rotate(-5deg);
+}
+.message {
+    font-size: 1.2em;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8e1e7;
+    border-radius: 10px;
+    display: none;
+}
+.btn {
+    background-color: #ff85a2;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.3s;
+}
+.btn:hover {
+    background-color: #ff6b8b;
+    transform: translateY(-2px);
+}
+.paw-prints {
+    margin: 30px 0;
+    opacity: 0.6;
+}

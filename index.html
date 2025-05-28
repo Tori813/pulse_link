@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paws & Whiskers</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Paws & Whiskers</h1>
+        <p>Click on the cute kitty below for a surprise!</p>
+        
+        <div class="cat" onclick="showMessage()">🐱</div>
+        
+        <div id="surprise" class="message">
+            Meow! You found me! Have a purr-fect day! 😺
+        </div>
+        
+        <div>
+            <button class="btn" onclick="changeCat()">Change Kitty</button>
+            <button class="btn" onclick="showPaws()">Show Paws</button>
+        </div>
+        
+        <div id="pawPrints" class="paw-prints"></div>
+    </div>
+
+    <script>
+        const cats = ['🐱', '🐈', '😺', '😸', '😹', '😻', '😼', '😽', '🐾'];
+        let currentCat = 0;
+        
+        function showMessage() {
+            const message = document.getElementById('surprise');
+            message.style.display = message.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        function changeCat() {
+            currentCat = (currentCat + 1) % cats.length;
+            document.querySelector('.cat').textContent = cats[currentCat];
+        }
+        
+        function showPaws() {
+            const pawPrints = document.getElementById('pawPrints');
+            pawPrints.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const paw = document.createElement('span');
+                paw.textContent = '🐾';
+                paw.style.margin = '0 5px';
+                paw.style.opacity = '0';
+                paw.style.transform = 'scale(0.5)';
+                paw.style.display = 'inline-block';
+                paw.style.transition = `all 0.5s ${i * 0.1}s`;
+                
+                setTimeout(() => {
+                    paw.style.opacity = '0.8';
+                    paw.style.transform = 'scale(1)';
+                }, 10);
+                
+                pawPrints.appendChild(paw);
+            }
+        }
+    </script>
+</body>
+</html>
