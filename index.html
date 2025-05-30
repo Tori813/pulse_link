@@ -3,63 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paws & Whiskers</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Pulse Link</title>
+    <link href="index.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Paws & Whiskers</h1>
-        <p>Click on the cute kitty below for a surprise!</p>
-        
-        <div class="cat" onclick="showMessage()">🐱</div>
-        
-        <div id="surprise" class="message">
-            Meow! You found me! Have a purr-fect day! 😺
+<main>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <img src="pulse_blue.png" alt="Pulse Link">
+            <h1 class="logo-text">PULSE LINK</h1>
+            <h1 class="hero-text">YOUR DIGITAL HEALTH PARTNER</h1>
+            <p class="tagline">Connecting you to quality healthcare services with just a tap. Fast, reliable, and always there when you need it most.</p>
+            <button class="cta-button" id="get-started-btn">Get Started <i class="fas fa-arrow-down"></i></button>
         </div>
-        
-        <div>
-            <button class="btn" onclick="changeCat()">Change Kitty</button>
-            <button class="btn" onclick="showPaws()">Show Paws</button>
-        </div>
-        
-        <div id="pawPrints" class="paw-prints"></div>
     </div>
 
-    <script>
-        const cats = ['🐱', '🐈', '😺', '😸', '😹', '😻', '😼', '😽', '🐾'];
-        let currentCat = 0;
-        
-        function showMessage() {
-            const message = document.getElementById('surprise');
-            message.style.display = message.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function changeCat() {
-            currentCat = (currentCat + 1) % cats.length;
-            document.querySelector('.cat').textContent = cats[currentCat];
-        }
-        
-        function showPaws() {
-            const pawPrints = document.getElementById('pawPrints');
-            pawPrints.innerHTML = '';
-            
-            for (let i = 0; i < 5; i++) {
-                const paw = document.createElement('span');
-                paw.textContent = '🐾';
-                paw.style.margin = '0 5px';
-                paw.style.opacity = '0';
-                paw.style.transform = 'scale(0.5)';
-                paw.style.display = 'inline-block';
-                paw.style.transition = `all 0.5s ${i * 0.1}s`;
-                
-                setTimeout(() => {
-                    paw.style.opacity = '0.8';
-                    paw.style.transform = 'scale(1)';
-                }, 10);
-                
-                pawPrints.appendChild(paw);
-            }
-        }
-    </script>
+    <!-- Features Section -->
+    <div class="intro" id="intro">
+            <h2>Why Choose PULSE LINK?</h2>
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-hospital"></i>
+                    <h3>Find Healthcare Facilities</h3>
+                    <p>Instantly locate hospitals, clinics, pharmacies, and emergency rooms based on your location.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-ambulance"></i>
+                    <h3>Emergency Assistance</h3>
+                    <p>Get real-time directions and contact information to reach help fast when you need it most.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Easy Booking</h3>
+                    <p>Connect directly with hospitals or schedule appointments with just a few taps.</p>
+                </div>
+            </div>
+    </div>
+    
+
+    <!-- Hospital Cards Section -->
+    <div class= "hospital-cards-section">
+        <h2>Featured Hospitals in Nairobi</h2>
+        <div class="row">
+            <div class="custom-column">
+                <div class="hospital-card">
+                    <h4>Aga Khan University Hospital</h4>
+                    <p>Specialties: Cardiology, Orthopedics, Neurology</p>
+                    <p>Located in Parklands, Nairobi</p>
+                    <a href="https://hospitals.aku.edu/Pages/default.aspx" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            <div class="custom-column">
+                <div class="hospital-card">
+                    <h4>Kenya National Hospital</h4>
+                    <p>Specialties: General Medicine, Pediatrics, Surgery</p>
+                    <p>Located in Upper Hill, Nairobi</p>
+                    <a href="https://knh.or.ke/" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            <div class="custom-column">
+                <div class="hospital-card">
+                    <h4>MP Shah Hospital</h4>
+                    <p>Specialties: Maternity, Emergency, Radiology</p>
+                    <p>Located in Parklands, Nairobi</p>
+                    <a href="https://mpshahhosp.org/" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Call to Action -->
+<div style="text-align: center; padding: 4rem 1rem; background-color: #f0f4f8;">
+    <h2>Your Health, Your Convinience</h2>
+    <p>No more searching, no more delays—just fast, reliable access to medical care when you need it most. Whether it’s an emergency or a routine checkup, PULSE LINK is here to guide you every step of the way.</p>
+    <p>Our mission is to empower you with the information you need to take control of your health.</p>
+    <p> Download now and take control of your health today!</p>
+    <a href="#" class="btn btn-primary">Download Now</a>
+</div>  
+
+ <!-- Footer -->  
+<footer>
+    <p>&copy; 2025 Pulse Link. All rights reserved.</p>
+</footer>
+
+</main>
+<script>
+    document.getElementById('get-started-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const introSection = document.getElementById('intro');
+        const headerOffset = 80; // Adjust this value based on your header height
+        const elementPosition = introSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+
+        // Add a class to trigger the animation
+        introSection.classList.add('slide-in');
+    });
+</script>
 </body>
 </html>
