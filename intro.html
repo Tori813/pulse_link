@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse - Welcome</title>
+    <link rel="stylesheet" href="intro.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="splash-screen">
+        <div class="splash-content">
+            <h1>PULSE LINK</h1>
+        </div>
+    </div>
+    <div class="container" id="main-content">
+        <h1>PULSE LINK</h1>
+        <div class="buttons">
+            <a href="Create An Account.html"> <button class="btn btn-primary">Sign Up</button></a>
+           <a href="Login.html"><button class="btn btn-secondary">Sign In</button></a>
+        </div>
+    </div>
+    <script>
+        // Hide splash screen after 5 seconds
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        }, 5000);
+    </script>
+</body>
+</html>

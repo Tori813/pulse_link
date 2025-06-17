@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Pulse Link</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Toggle -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-bell"></i>
+                            <span>Inbox</span>
+                            <span class="badge">3</span> 
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>My Profile</h1>
+                <div class="user-info">
+                    <span>Welcome, Victoria</span>
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                </div>
+            </header>
+
+            <div class="profile-container">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="https://via.placeholder.com/150" alt="Profile Picture" id="profilePic">
+                        <button class="edit-avatar-btn">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <h2>Victoria Okello</h2>
+                        <p class="role">Administrator</p>
+                        <p class="member-since">Member since June 2025</p>
+                    </div>
+                    <button class="btn btn-edit-profile">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+
+                <!-- Profile Content -->
+                <div class="profile-content">
+                    <!-- Personal Information -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user-circle"></i> Personal Information</h3>
+                            <button class="btn-text">Edit</button>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="label">First Name</span>
+                                <span class="value" id="firstName">Victoria</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Last Name</span>
+                                <span class="value" id="lastName">Okello</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Email</span>
+                                <span class="value" id="email">victoria@example.com</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Phone</span>
+                                <span class="value" id="phone">+254 712 345 678</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Date of Birth</span>
+                                <span class="value" id="dob">June 9, 2004</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Gender</span>
+                                <span class="value" id="gender">Female</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-map-marker-alt"></i> Address Information</h3>
+                            <button class="btn-text">Edit</button>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="label">Street Address</span>
+                                <span class="value" id="streetAddress">123 Healthcare Lane</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Apt/Suite</span>
+                                <span class="value" id="aptSuite">Apt 4B</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">City</span>
+                                <span class="value" id="city">Nairobi</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">State/Province</span>
+                                <span class="value" id="state">Nairobi County</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Postal Code</span>
+                                <span class="value" id="postalCode">00100</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Country</span>
+                                <span class="value" id="country">Kenya</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple script for the edit profile button
+        document.querySelector('.btn-edit-profile')?.addEventListener('click', function() {
+            alert('Edit profile functionality will be implemented here');
+        });
+    </script>
+    <script src="sidebar.js"></script>
+</body>
+</html>

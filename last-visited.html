@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Visited - Pulse Link</title>
+    <link href="dashboard.css" rel="stylesheet">
+    <link href="sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        .visits-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .visits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .visits-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .visits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .visit-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .visit-item:last-child {
+            border-bottom: none;
+        }
+        
+        .visit-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e3f2fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #1976d2;
+            font-size: 18px;
+        }
+        
+        .visit-details {
+            flex: 1;
+        }
+        
+        .visit-facility {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+        }
+        
+        .visit-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .visit-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .visit-time {
+            margin-left: auto;
+            color: #95a5a6;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .no-visits {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="visits-container">
+            <div class="visits-header">
+                <h1 class="visits-title">Last Visited</h1>
+                <div class="search-box">
+                    <input type="text" placeholder="Search visits..." style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 250px;">
+                </div>
+            </div>
+            
+            <div class="welcome-message" style="text-align: center; padding: 60px 20px;">
+                <div style="max-width: 500px; margin: 0 auto;">
+                    <div style="width: 80px; height: 80px; background-color: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-history" style="font-size: 32px; color: #388e3c;"></i>
+                    </div>
+                    <h2 style="color: #2c3e50; margin-bottom: 15px;">Your Visit History</h2>
+                    <p style="color: #7f8c8d; margin-bottom: 25px; line-height: 1.6;">
+                        Your recent facility visits will appear here. As you schedule and complete appointments, you'll be able to track your healthcare journey in one convenient place.
+                    </p>
+                    <p style="color: #95a5a6; font-size: 14px;">
+                        No visit history to display yet. Your upcoming and past visits will be listed here.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script>
+        // Add active class to current nav item
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter buttons functionality
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // Here you would typically filter the visits based on the selected time period
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-box input');
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const visitItems = document.querySelectorAll('.visit-item');
+                
+                visitItems.forEach(item => {
+                    const facilityName = item.querySelector('.visit-facility').textContent.toLowerCase();
+                    if (facilityName.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

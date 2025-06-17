@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Creating An Account</title>
+        <link rel="stylesheet" href="Create An Account.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+<body>
+    <h1>Creating An Account</h1>
+    <p>Please fill out the form below</p>
+<form>
+    <div class="form-container">
+        <fieldset>
+            <legend>Personal Information</legend>
+             <label for="first-name">First Name: </label> 
+             <input id="first-name" placeholder="Enter your first name"></input>
+             <label for="last-name">Last Name: </label> 
+             <input id="last-name" placeholder="Enter your last name"></input>
+        </fieldset>
+    <fieldset>
+        <legend>Contact Information</legend>
+         <label for="email">Email: </label> 
+         <input id="email" placeholder="Enter your email"></input>
+         <label for="phone-number">Phone Number: </label> 
+         <input id="phone-number" placeholder="Enter your phone number"></input>
+    </fieldset>
+    <fieldset>
+        <legend>Authentication</legend>
+         <label for="create-password">Create Password: </label>
+         <input id="create-password"></input>
+         <label for="confirm-password">Confirm Password: </label>
+         <input id="confirm-password"></input>
+    </fieldset>
+    <fieldset class="terms-fieldset">
+        <label>
+            <input type="checkbox" class="checkbox">
+            I accept the 
+            <span class="terms-container">
+                <a href="#" class="terms-link">terms and conditions</a>
+                <div class="terms-popup">
+                    <h4>Terms & Conditions</h4>
+                    <div class="terms-content">
+                        <p><strong>Last Updated:</strong> May 30, 2025</p>
+                        <p>By using Pulse Link, you agree to the following terms and conditions:</p>
+                        <ol>
+                            <li>You must be at least 18 years old to use our services.</li>
+                            <li>The information provided is for general informational purposes only.</li>
+                            <li>We are not responsible for the accuracy of healthcare provider information.</li>
+                            <li>Emergency situations require immediate contact with local emergency services.</li>
+                            <li>Your use of this service is at your own risk.</li>
+                        </ol>
+                        <p>For our full terms and conditions, please contact our support team.</p>
+                    </div>
+                </div>
+            </span>
+        </label>
+    </fieldset>
+    <fieldset>
+        <input type="submit" value="SUBMIT"></input>
+    </fieldset>
+    </div>
+    <script src="js/account.js"></script>
+    <p><b>Already have an account?</b><a href="login.html"> log in</a></p>
+</form>
+</body>
+</html>
