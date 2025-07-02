@@ -1,5 +1,6 @@
 CREATE DATABASE pulse_link;
 USE DATABASE pluse_link;
+
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -11,5 +12,22 @@ CREATE TABLE users (
     phone_number VARCHAR(20) UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+); 
+
+CREATE TABLE user_profiles (
+    profile_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    Full_name 
+    date_of_birth DATE,
+    gender ENUM('Male', 'Female', 'Other'),
+    phone_number VARCHAR(20) UNIQUE,
+    emergency_contact VARCHAR(20),
+    address VARCHAR(255),
+    city VARCHAR(100),
+    country VARCHAR(100),
+    profile_picture_url VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+
 
