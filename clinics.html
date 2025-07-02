@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nairobi Clinics</title>
+    <!-- Add Font Awesome for map icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .card-footer {
+            margin-top: auto;
+            padding: 15px 0 5px 0;
+            text-align: left;
+            border-top: 1px solid rgba(0, 150, 136, 0.1);
+        }
+
+        .map-icon {
+            display: inline-flex;
+            align-items: center;
+            color: #009688;
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: rgba(0, 150, 136, 0.05);
+            border: 1px solid rgba(0, 150, 136, 0.2);
+        }
+
+        .map-icon:hover {
+            background-color: rgba(0, 150, 136, 0.1);
+            text-decoration: none;
+            transform: none;
+        }
+
+        .map-icon i {
+            margin-right: 6px;
+            font-size: 1em;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body { transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f0f2f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header { transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: center;
+            margin: 0 auto 40px;
+            padding: 30px 20px;
+            background: #009688;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+            width: calc(100% + 20px);
+        }
+        .col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        @media (min-width: 768px) {
+            .col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        .clinic-card {
+            background: white;
+            border-radius: 0 10px 10px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 5px solid #009688;
+            margin-left: -5px;
+        }
+        .clinic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-body { transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .clinic-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #009688;
+            font-style: normal;
+        }
+        .card-title {
+            color: #009688;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            padding: 5px 10px;
+            background-color: #e0f2f1;
+            display: inline-block;
+            border-radius: 4px;
+            margin-left: -10px;
+        }
+        
+        .card-category {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #e0f2f1;
+            color: #00796b;
+        }
+        .card-specialty {
+            color: #00796b;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .card-text {
+            color: #5f6368;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            flex-grow: 1;
+        }
+        .card-text i {
+            margin-right: 8px;
+            color: #e53935;
+            font-style: normal;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #009688;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #00796b;
+        }
+    </style>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nairobi Clinics</h1>
+            <p class="lead">Find specialized clinics across Nairobi</p>
+        </div>
+        
+        <div class="row" id="clinics-container">
+            <!-- Clinic cards will be dynamically inserted here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="facility-types.html" class="back-button">← Back to Facility Types</a>
+        </div>
+    </div>
+
+    <script>
+        // Clinic data
+        const clinics = [
+            { 
+                name: "Dr. Yamal's Clinic", 
+                specialty: "Obstetrics & Gynecology", 
+                location: "Parklands",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8518925993776!2d36.81906887395577!3d-1.2611145355969997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f171841e44b8b%3A0x142f876dd863a6d4!2sDr.%20Yamal%20Patel!5e0!3m2!1sen!2ske!4v1750656168825!5m2!1sen!2ske"
+            },
+            { 
+                name: "Gottel Dental Center", 
+                specialty: "Dental care", 
+                location: "Mama Ngina Street",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.81812845095!2d36.81883147395589!3d-1.282956135620365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d625c7c889%3A0xea713e1da16c037a!2sGottel%20Dental%20Center!5e0!3m2!1sen!2ske!4v1750656263374!5m2!1sen!2ske"
+            },
+            { 
+                name: "Fertility Point Kenya", 
+                specialty: "IVF and fertility services", 
+                location: "Parklands",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7939407320996!2d36.806000673955936!3d-1.2983770356373332!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f118018ab45d1%3A0xf46930da16294399!2sFertility%20Point%20I%20Best%20IVF%20Centre%20in%20Nairobi%20I%20Best%20Fertility%20Doctors!5e0!3m2!1sen!2ske!4v1750656327067!5m2!1sen!2ske"
+            },
+            { 
+                name: "Chiromo Hospital Group", 
+                specialty: "Mental health and wellness", 
+                location: "Westlands",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d31910.35362859811!2d36.77252666706696!3d-1.2982104443667741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Chiromo%20Hospital%20Group%20!5e0!3m2!1sen!2ske!4v1750656404098!5m2!1sen!2ske"
+            },
+            { 
+                name: "Avenue Healthcare Clinics", 
+                specialty: "Multiple specialties", 
+                location: "Multiple branches across Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d15955.385308693347!2d36.80761983083462!3d-1.2647406981490168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Avenue%20Healthcare%20Clinics%20!5e0!3m2!1sen!2ske!4v1750656488044!5m2!1sen!2ske"
+            },
+            { 
+                name: "Nairobi Women's Hospital Outpatient Clinics", 
+                specialty: "Women's health", 
+                location: "Various locations",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63821.54388107038!2d36.77671948085944!3d-1.264633085581319!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Nairobi%20Women%E2%80%99s%20Hospital%20Outpatient%20Clinics%20!5e0!3m2!1sen!2ske!4v1750656539971!5m2!1sen!2ske"
+            },
+            { 
+                name: "Coptic Hospital Clinics", 
+                specialty: "General and specialist care", 
+                location: "Ngong Road",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.588723340996!2d36.789237686357076!3d-1.3028977518761298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Coptic%20Hospital%20Clinics%20!5e0!3m2!1sen!2ske!4v1750656585212!5m2!1sen!2ske"
+            },
+            { 
+                name: "Aga Khan University Hospital Medical Centres", 
+                specialty: "Comprehensive care", 
+                location: "Parklands and satellite clinics",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.59308796911!2d36.78923759880574!3d-1.3027254558650294!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sAga%20Khan%20University%20Hospital%20Medical%20Centres!5e0!3m2!1sen!2ske!4v1750656689829!5m2!1sen!2ske"
+            },
+            { 
+                name: "MP Shah Hospital Clinics", 
+                specialty: "General and specialized care", 
+                location: "Village Market, Ronald Ngala",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.597452018235!2d36.789237511254406!3d-1.302553159931191!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20MP%20Shah%20Hospital%20Clinics!5e0!3m2!1sen!2ske!4v1750656744492!5m2!1sen!2ske"
+            },
+            { 
+                name: "Gertrude's Children's Hospital Clinics", 
+                specialty: "Pediatric care", 
+                location: "Multiple locations",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.601815488284!2d36.78923742370307!3d-1.3023808640746148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Gertrude%E2%80%99s%20Children%E2%80%99s%20Hospital%20Clinics%20!5e0!3m2!1sen!2ske!4v1750656876028!5m2!1sen!2ske"
+            },
+            { 
+                name: "Mater Hospital Outpatient Clinics", 
+                specialty: "General and specialized care", 
+                location: "Buruburu, Westlands",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.606178379254!2d36.78923733615174!3d-1.3022085682953004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Mater%20Hospital%20Outpatient%20Clinics!5e0!3m2!1sen!2ske!4v1750657105669!5m2!1sen!2ske"
+            },
+            { 
+                name: "Nairobi West Hospital Clinics", 
+                specialty: "General and specialist services", 
+                location: "Nairobi West",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.61054069115!2d36.78923724860039!3d-1.302036272593261!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sNairobi%20West%20Hospital%20Clinics!5e0!3m2!1sen!2ske!4v1750657176645!5m2!1sen!2ske"
+            },
+            { 
+                name: "Karen Hospital Clinics", 
+                specialty: "Comprehensive care", 
+                location: "Karen and satellite branches",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.61490242398!2d36.78923716104902!3d-1.3018639769684708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Karen%20Hospital%20Clinics!5e0!3m2!1sen!2ske!4v1750657228714!5m2!1sen!2ske"
+            },
+            { 
+                name: "Radiant Group of Hospitals Clinics", 
+                specialty: "General and specialized care", 
+                location: "Pangani and other areas",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63820.61926357773!2d36.789237073497645!3d-1.3016916814209554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Radiant%20Group%20of%20Hospitals%20Clinics!5e0!3m2!1sen!2ske!4v1750657336752!5m2!1sen!2ske"
+            },
+            { 
+                name: "Imara Mediplus Medical Centre", 
+                specialty: "General practice", 
+                location: "Umoja and Donholm",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d127641.03359841171!2d36.74814414182948!3d-1.305733721582522!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sImara%20Mediplus%20Medical%20Centre!5e0!3m2!1sen!2ske!4v1750657487554!5m2!1sen!2ske"
+            },
+            { 
+                name: "Ruai Family Hospital Clinics", 
+                specialty: "Family medicine", 
+                location: "Eastlands and CBD",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8331984444476!2d36.99813437395592!3d-1.2732538356098904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f6b8168851e13%3A0x2260b8d66ac63df3!2sRuai%20Family%20Hospital!5e0!3m2!1sen!2ske!4v1750657541988!5m2!1sen!2ske"
+            },
+            { 
+                name: "Equity Afia Clinics", 
+                specialty: "Affordable care", 
+                location: "Multiple Nairobi locations",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d127642.6711786924!2d36.91830629134946!3d-1.2730755243418872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Equity%20Afia%20Clinics%20!5e0!3m2!1sen!2ske!4v1750657632735!5m2!1sen!2ske"
+            },
+            { 
+                name: "AAR Healthcare Clinics", 
+                specialty: "Private outpatient services", 
+                location: "Upper Hill and more",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d127642.68830084824!2d36.91830594109369!3d-1.2727296318170214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sAAR%20Healthcare%20Clinics!5e0!3m2!1sen!2ske!4v1750657697988!5m2!1sen!2ske"
+            },
+            { 
+                name: "Jubilee Health Insurance Clinics", 
+                specialty: "For insured clients", 
+                location: "Various branches",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63821.053126863095!2d36.785724686326944!3d-1.2844356060199136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sJubilee%20Health%20Insurance%20Clinics!5e0!3m2!1sen!2ske!4v1750657754338!5m2!1sen!2ske"
+            },
+            { 
+                name: "Chiromo Lane Medical Centre (CLMC)", 
+                specialty: "Psychiatry and counseling", 
+                location: "Westlands",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d31910.609124123792!2d36.769070939416636!3d-1.2778070120469764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Chiromo%20Lane%20Medical%20Centre%20(CLMC)!5e0!3m2!1sen!2ske!4v1750657802217!5m2!1sen!2ske"
+            }
+        ];
+
+        // Function to create clinic cards
+        function createClinicCards() {
+            const container = document.getElementById('clinics-container');
+            
+            clinics.forEach(clinic => {
+                // Create column div
+                const col = document.createElement('div');
+                col.className = 'col';
+                
+                // Create card div
+                const card = document.createElement('div');
+                card.className = 'clinic-card';
+                
+                // Create card content
+                const escapedName = clinic.name.replace(/'/g, "\\'");
+                
+                // Create location text without the map link
+                const locationText = document.createElement('p');
+                locationText.className = 'card-text';
+                locationText.innerHTML = `<i>📍</i> ${clinic.location}`;
+                
+                // Create card body
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                cardBody.innerHTML = `
+                    <i class="clinic-icon">🏥</i>
+                    <h3 class="card-title">${clinic.name}</h3>
+                    <div class="card-category">Clinic</div>
+                    <div class="card-specialty">${clinic.specialty}</div>
+                `;
+                
+                // Add location text to card body
+                cardBody.appendChild(locationText);
+                
+                // Create card footer with map link
+                if (clinic.map) {
+                    const cardFooter = document.createElement('div');
+                    cardFooter.className = 'card-footer';
+                    cardFooter.innerHTML = `
+                        <a href="#" class="map-icon" onclick="event.preventDefault(); openMap('${escapedName}', '${clinic.map}')">
+                            <i class="fas fa-map"></i> View on Map
+                        </a>
+                    `;
+                    cardBody.appendChild(cardFooter);
+                }
+                
+                // Append elements
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                container.appendChild(col);
+            });
+        }
+
+        // Modal functionality
+        function openMap(title, mapUrl) {
+            const modal = document.getElementById('mapModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMap = document.getElementById('modalMap');
+            
+            modalTitle.textContent = title;
+            modalMap.src = mapUrl;
+            modal.style.display = 'block';
+            
+            // Close modal when clicking the close button
+            document.querySelector('.close').onclick = function() {
+                modal.style.display = 'none';
+                modalMap.src = ''; // Reset the iframe src
+            }
+            
+            // Close modal when clicking outside the modal content
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                    modalMap.src = ''; // Reset the iframe src
+                }
+            }
+        }
+        
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createClinicCards();
+        });
+    </script>
+    
+    <!-- Map Modal -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div class="map-container">
+                <iframe id="modalMap" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/theme-switcher.js"></script>
+</head        

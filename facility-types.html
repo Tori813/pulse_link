@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facility Types - Pulse Link</title>
+    <link href="dashboard.css" rel="stylesheet">
+    <link href="sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes (excluding sidebar)
+            const elementsToTheme = [
+                document.documentElement, // html element
+                document.body,
+                document.querySelector('.main-content'),
+                document.querySelector('.facility-container'),
+                document.querySelector('.facility-grid'),
+                document.querySelector('.facility-card'),
+                document.querySelector('.page-header'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('.modal-content')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get saved theme or default to system
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Apply the saved theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        });
+    </script>
+    <style>
+        .facility-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+        }
+        
+        .facility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .facility-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .facility-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .facility-icon {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+        }
+        
+        .facility-details {
+            padding: 20px;
+        }
+        
+        .facility-name {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+        }
+        
+        .facility-count {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .facility-desc {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .view-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #3f51b5;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .view-btn:hover {
+            background: #303f9f;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-box {
+                width: 100%;
+                max-width: 100%;
+                margin-top: 15px;
+            }
+            
+            .facility-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item active">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="facility-container">
+            <div class="page-header">
+                <h1 class="page-title">Facility Types</h1>
+            </div>
+            
+            <div class="facility-grid">
+                <!-- Hospital Card -->
+                <div class="facility-card">
+                    <div class="facility-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="facility-details">
+                        <h3 class="facility-name">Hospitals</h3>
+                        <span class="facility-count">20 Facilities</span>
+                        <p class="facility-desc">General and specialized medical facilities offering inpatient and outpatient care, emergency services, and surgical procedures.</p>
+                        <a href="hospitals.html" class="view-btn">View Hospitals</a>
+                    </div>
+                </div>
+                
+                <!-- Clinic Card -->
+                <div class="facility-card">
+                    <div class="facility-icon" style="background: linear-gradient(135deg, #009688, #4db6ac);">
+                        <i class="fas fa-clinic-medical"></i>
+                    </div>
+                    <div class="facility-details">
+                        <h3 class="facility-name">Clinics</h3>
+                        <span class="facility-count">20 Facilities</span>
+                        <p class="facility-desc">Primary care facilities providing outpatient medical services, routine check-ups, and basic diagnostic services.</p>
+                        <a href="clinics.html" class="view-btn" style="background: #009688;">View Clinics</a>
+                    </div>
+                </div>
+                
+                <!-- Pharmacy Card -->
+                <div class="facility-card">
+                    <div class="facility-icon" style="background: linear-gradient(135deg, #ff9800, #ffb74d);">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="facility-details">
+                        <h3 class="facility-name">Pharmacies</h3>
+                        <span class="facility-count">20 Facilities</span>
+                        <p class="facility-desc">Authorized healthcare facilities for dispensing prescription medications and providing pharmaceutical care.</p>
+                        <a href="pharmacies.html" class="view-btn" style="background: #ff9800;">View Pharmacies</a>
+                    </div>
+                </div>
+                
+                <!-- Laboratory Card -->
+                <div class="facility-card">
+                    <div class="facility-icon" style="background: linear-gradient(135deg, #9c27b0, #ba68c8);">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <div class="facility-details">
+                        <h3 class="facility-name">Laboratories</h3>
+                        <span class="facility-count">13 Facilities</span>
+                        <p class="facility-desc">Medical facilities equipped to perform diagnostic tests, clinical analysis, and research activities.</p>
+                        <a href="laboratories.html" class="view-btn" style="background: #9c27b0;">View Labs</a>
+                    </div>
+                </div>
+                
+                <!-- Diagnostic Center Card -->
+                <div class="facility-card">
+                    <div class="facility-icon" style="background: linear-gradient(135deg, #f44336, #e57373);">
+                        <i class="fas fa-x-ray"></i>
+                    </div>
+                    <div class="facility-details">
+                        <h3 class="facility-name">Diagnostic Centers</h3>
+                        <span class="facility-count">08 Facilities</span>
+                        <p class="facility-desc">Specialized centers offering medical imaging, radiology, and other diagnostic procedures.</p>
+                        <a href="diagnostic-centers.html" class="view-btn" style="background: #f44336;">View Centers</a>
+                    </div>
+                </div>
+                
+                <!-- Rehabilitation Center Card -->
+                <div class="facility-card">
+                    <div class="facility-icon" style="background: linear-gradient(135deg, #2196f3, #64b5f6);">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="facility-details">
+                        <h3 class="facility-name">Rehabilitation Centers</h3>
+                        <span class="facility-count">14 Facilities</span>
+                        <p class="facility-desc">Facilities providing therapy and treatment for recovery from injuries, illnesses, or addictions.</p>
+                        <a href="rehabilitation-centers.html" class="view-btn" style="background: #2196f3;">View Centers</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            const searchInput = document.querySelector('.search-box input');
+            const facilityCards = document.querySelectorAll('.facility-card');
+            
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                facilityCards.forEach(card => {
+                    const name = card.querySelector('.facility-name').textContent.toLowerCase();
+                    const desc = card.querySelector('.facility-desc').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || desc.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

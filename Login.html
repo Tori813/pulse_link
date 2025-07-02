@@ -12,17 +12,19 @@
         <div class="form-container">
             <fieldset>
                 <legend>Account Information</legend>
-                <label for="first name">First Name:</label>
-                <input id="first name" placeholder="Enter your first name"></input>
-                <label for="last name">Last Name:</label>
-                <input id="last name" placeholder="last name"></input>
                  <label for="email">Email: </label> 
                  <input id="email" placeholder="Enter your email"></input>
-                 <label for="password">Password: </label> 
-                 <input id="password" type="password" placeholder="Enter your password"></input>
             </fieldset>
             <fieldset>
-                 <label><input type="checkbox" class="checkbox"></input> <b>Remember me</b></label>
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </fieldset>
+            <p class="forgot-password">Forgot Password?</p>
+            <fieldset>
+                <label>
+                    <input type="checkbox" class="checkbox">
+                    <span>Remember me</span>
+                </label>
             </fieldset>
             <fieldset>
                  <input type="submit" value="LOG IN"></input>

@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Pulse Link</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="dark-theme.css">
+
+    <style>
+        /* Popup Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #0a2463;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #0a2463;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #071a41;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #0a2463;
+            color: #0a2463;
+        }
+
+        .btn-outline:hover {
+            background-color: #f0f2f5;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Logs and Sessions Modal Styles */
+        .logs-container, .sessions-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+
+        .logs-header, .sessions-header,
+        .log-entry, .session-entry {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+        }
+
+        .sessions-header,
+        .session-entry {
+            grid-template-columns: 2.5fr 2fr 1fr 1fr;
+        }
+
+
+        .logs-header span, .sessions-header span {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .log-entry, .session-entry {
+            transition: background-color 0.2s;
+        }
+
+        .log-entry:hover, .session-entry:hover {
+            background-color: #f9f9f9;
+        }
+
+        .log-date, .log-action, .log-ip,
+        .session-device, .session-location, .session-last-active, .session-actions {
+            padding: 5px 0;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .current-session {
+            background-color: #f0f7ff;
+            border-left: 3px solid #0a2463;
+        }
+
+        .current-badge {
+            background-color: #0a2463;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 13px;
+        }
+
+        .end-session {
+            color: #e74c3c;
+            border-color: #e74c3c !important;
+        }
+
+        .end-session:hover {
+            background-color: #fde8e8 !important;
+        }
+
+        .session-device i, .session-location i {
+            margin-right: 5px;
+            color: #777;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Toggle -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item active">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Settings</h1>
+                <div class="user-info">
+                    <span>Welcome, Victoria</span>
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                </div>
+            </header>
+
+            <div class="settings-container">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="account"><i class="fas fa-user-cog"></i> Account</button>
+                    <button class="tab-btn" data-tab="security"><i class="fas fa-shield-alt"></i> Security</button>
+                    <button class="tab-btn" data-tab="notifications"><i class="fas fa-bell"></i> Notifications</button>
+                    <button class="tab-btn" data-tab="appearance"><i class="fas fa-paint-brush"></i> Appearance</button>
+                </div>
+
+                <div class="settings-content">
+                    <!-- Account Settings -->
+                    <div id="account" class="tab-content active">
+                        <h2><i class="fas fa-user-cog"></i> Account Settings</h2>
+                        <div class="setting-group">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Change Password</h3>
+                                    <p>Update your current password to a new one</p>
+                                </div>
+                                <button class="btn btn-outline" id="changePasswordBtn">Change</button>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Email Address</h3>
+                                    <p>victoria@gmail.com</p>
+                                </div>
+                                <button class="btn btn-outline" id="changeEmailBtn">Change</button>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Two-Factor Authentication</h3>
+                                    <p>Add an extra layer of security to your account</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div id="security" class="tab-content">
+                        <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
+                        <div class="setting-group">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Change Password</h3>
+                                    <p>Last changed 3 months ago</p>
+                                </div>
+                                <button class="btn btn-outline" id="changePasswordSecurityBtn">Change</button>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Two-Factor Authentication</h3>
+                                    <p>Add an extra layer of security to your account</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Login History</h3>
+                                    <p>View your recent login activity</p>
+                                </div>
+                                <button class="btn btn-outline" id="viewLogsBtn">View Logs</button>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Active Sessions</h3>
+                                    <p>Manage your currently active sessions</p>
+                                </div>
+                                <button class="btn btn-outline" id="viewSessionsBtn">Manage</button>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Roles</h3>
+                                    <p>Manage user roles and permissions</p>
+                                </div>
+                                <a href="roles.html" class="btn btn-outline">Manage</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Settings -->
+                    <div id="notifications" class="tab-content">
+                        <h2><i class="fas fa-bell"></i> Notification Settings</h2>
+                        <div class="setting-group">
+                            <h3 class="section-title">Email Notifications</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>New Messages</h3>
+                                    <p>Get notified when you receive new messages</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Activity Alerts</h3>
+                                    <p>Get alerts for important activities</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <h3 class="section-title">Push Notifications</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>New Updates</h3>
+                                    <p>Receive push notifications for new updates</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Reminders</h3>
+                                    <p>Get reminders for important events</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Settings -->
+                    <div id="appearance" class="tab-content">
+                        <h2><i class="fas fa-paint-brush"></i> Appearance</h2>
+                        <div class="setting-group">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Theme</h3>
+                                    <p>Choose between light and dark theme</p>
+                                </div>
+                                <select class="form-select" id="themeSelector" onchange="switchTheme(this.value)">
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="system">System Default</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Language</h3>
+                                    <p>Select your preferred display language</p>
+                                </div>
+                                <select class="form-select" id="languageSelect">
+                                    <option value="en">English</option>
+                                    <option value="sw">Kiswahili</option>
+                                </select>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle functionality
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+
+            // Toggle sidebar
+            menuToggle?.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                mainContent?.classList.toggle('sidebar-active');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 992) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnMenuToggle = menuToggle?.contains(event.target);
+                    
+                    if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                        mainContent?.classList.remove('sidebar-active');
+                    }
+                }
+            });
+
+            // Handle logout
+            const logoutBtn = document.querySelector('.logout');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    // Add your logout logic here
+                    console.log('Logging out...');
+                    // window.location.href = 'login.html';
+                });
+            }
+
+
+            // Update active menu item based on current page
+            const currentPage = window.location.pathname.split('/').pop() || 'settings.html';
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                const link = item.getAttribute('onclick');
+                if (link && link.includes(currentPage)) {
+                    item.classList.add('active');
+                } else if (item.textContent.trim() === 'Settings' && currentPage === 'settings.html') {
+                    item.classList.add('active');
+                }
+            });
+
+            // Tab switching functionality
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active class to clicked button and corresponding content
+                    btn.classList.add('active');
+                    const tabId = btn.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Initialize first tab as active
+            if (tabBtns.length > 0) {
+                tabBtns[0].click();
+            }
+
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    document.body.classList.toggle('dark-theme', this.checked);
+                    // Save theme preference to localStorage
+                    localStorage.setItem('darkTheme', this.checked);
+                });
+
+                // Load saved theme preference
+                const darkTheme = localStorage.getItem('darkTheme') === 'true';
+                themeToggle.checked = darkTheme;
+                document.body.classList.toggle('dark-theme', darkTheme);
+            }
+
+
+            // Language selection handler
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                // Load saved language preference if available
+                const savedLanguage = localStorage.getItem('userLanguage') || 'en';
+                languageSelect.value = savedLanguage;
+                
+                // Save language preference when changed
+                languageSelect.addEventListener('change', function() {
+                    const selectedLanguage = this.value;
+                    // Save to localStorage
+                    localStorage.setItem('userLanguage', selectedLanguage);
+                    console.log('Language changed to:', selectedLanguage);
+                    
+                    // Show confirmation message
+                    alert('Language preference saved. Page will refresh to apply changes.');
+                    // Reload the page to apply language changes
+                    window.location.reload();
+                });
+            }
+
+            // Notification toggles
+            const notificationToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+            notificationToggles.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const settingId = this.id.replace('Toggle', '');
+                    console.log(`${settingId} notifications:`, this.checked ? 'ON' : 'OFF');
+                    // Save notification preference
+                    // This is where you would typically make an API call to save the preference
+                });
+
+                // Load saved notification preferences
+                const settingId = toggle.id.replace('Toggle', '');
+                const savedSetting = localStorage.getItem(settingId);
+                if (savedSetting !== null) {
+                    toggle.checked = savedSetting === 'true';
+                }
+            });
+        });
+
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes
+            const elementsToTheme = [
+                document.querySelector('.main-content'),
+                document.querySelector('.settings-container'),
+                document.querySelector('.settings-content'),
+                document.querySelector('.tab-content.active'),
+                ...document.querySelectorAll('.setting-item'),
+                ...document.querySelectorAll('.tab-btn')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                    
+                    // Special handling for active tab content
+                    if (element.classList.contains('tab-content') && element.classList.contains('active')) {
+                        element.classList.add(theme + '-mode');
+                    }
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body as fallback and for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+            
+            // Update the theme selector dropdown
+            const themeSelector = document.getElementById('themeSelector');
+            if (themeSelector) {
+                // Find the option that matches the actual theme being applied
+                for (let option of themeSelector.options) {
+                    if (option.value === theme || 
+                        (option.value === 'system' && theme === (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Update CSS variables based on theme
+            updateThemeColors(theme);
+        }
+        
+        // Update CSS variables based on theme
+        function updateThemeColors(theme) {
+            const root = document.documentElement;
+            if (theme === 'dark') {
+                root.style.setProperty('--bg-color', '#1a1a2e');
+                root.style.setProperty('--text-color', '#f0f0f0');
+                root.style.setProperty('--card-bg', '#16213e');
+                root.style.setProperty('--border-color', '#2a2a4a');
+                root.style.setProperty('--hover-bg', '#2a2a4a');
+            } else {
+                // Light theme colors
+                root.style.setProperty('--bg-color', '#f5f7fa');
+                root.style.setProperty('--text-color', '#333');
+                root.style.setProperty('--card-bg', '#ffffff');
+                root.style.setProperty('--border-color', '#e0e0e0');
+                root.style.setProperty('--hover-bg', '#f0f0f0');
+            }
+        }
+        
+        // Check for saved theme preference or use system preference
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Set up theme selector change handler
+            const themeSelector = document.getElementById('themeSelector');
+            if (themeSelector) {
+                // Set the selected value based on saved preference
+                themeSelector.value = savedTheme;
+                
+                // Add change event listener
+                themeSelector.addEventListener('change', function() {
+                    switchTheme(this.value);
+                });
+            }
+            
+            // Apply the theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes if 'system' is selected
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            prefersDarkScheme.addListener((e) => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        }
+        
+        // Initialize theme when the page loads
+        document.addEventListener('DOMContentLoaded', initTheme);
+    </script>
+    
+    <!-- Logs Modal -->
+    <div class="modal-overlay" id="logsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <button class="close-modal" id="closeLogsModal">&times;</button>
+            <h2><i class="fas fa-history"></i> Account Activity Logs</h2>
+            <p>Review your recent account activities and access history.</p>
+            <div class="logs-container" id="logsContent">
+                <!-- Logs will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Sessions Modal -->
+    <div class="modal-overlay" id="sessionsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <button class="close-modal" id="closeSessionsModal">&times;</button>
+            <h2><i class="fas fa-laptop"></i> Active Sessions</h2>
+            <p>Manage your active login sessions across different devices.</p>
+            <div class="sessions-container" id="sessionsContent">
+                <!-- Sessions will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closePasswordModal">&times;</button>
+            <h2>Change Password</h2>
+            <p>Enter your current and new password below</p>
+            
+            <div class="form-group">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
+                <div class="error-message" id="currentPasswordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPasswordSettings" placeholder="Enter new password">
+                <div class="error-message" id="newPasswordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmNewPassword">Confirm New Password</label>
+                <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-outline" id="cancelPasswordChange">Cancel</button>
+                <button class="btn btn-primary" id="savePassword">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Email Modal -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeEmailModal">&times;</button>
+            <h2>Change Email Address</h2>
+            <p>Enter your new email address below</p>
+            
+            <div class="form-group">
+                <label for="currentPasswordForEmail">Current Password</label>
+                <input type="password" id="currentPasswordForEmail" placeholder="Enter your password">
+                <div class="error-message" id="emailPasswordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="newEmail">New Email Address</label>
+                <input type="email" id="newEmail" placeholder="Enter new email address">
+                <div class="error-message" id="newEmailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmNewEmail">Confirm New Email</label>
+                <input type="email" id="confirmNewEmail" placeholder="Confirm new email address">
+                <div class="error-message" id="confirmEmailError"></div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-outline" id="cancelEmailChange">Cancel</button>
+                <button class="btn btn-primary" id="saveEmail">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        // Password Change Modal
+        const passwordModal = document.getElementById('passwordModal');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const changePasswordSecurityBtn = document.getElementById('changePasswordSecurityBtn');
+        const closePasswordModal = document.getElementById('closePasswordModal');
+        const cancelPasswordChange = document.getElementById('cancelPasswordChange');
+        const savePasswordBtn = document.getElementById('savePassword');
+
+        // Email Change Modal
+        const emailModal = document.getElementById('emailModal');
+        const changeEmailBtn = document.getElementById('changeEmailBtn');
+        const closeEmailModal = document.getElementById('closeEmailModal');
+        const cancelEmailChange = document.getElementById('cancelEmailChange');
+        const saveEmailBtn = document.getElementById('saveEmail');
+
+        // Open Password Modal from Account Settings
+        changePasswordBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Open Password Modal from Security Settings
+        changePasswordSecurityBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close Password Modal
+        function closePasswordModalFunc() {
+            passwordModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Clear form and errors
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPasswordSettings').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            document.querySelectorAll('#passwordModal .error-message').forEach(el => el.style.display = 'none');
+        }
+
+        closePasswordModal.addEventListener('click', closePasswordModalFunc);
+        cancelPasswordChange.addEventListener('click', closePasswordModalFunc);
+
+        // Open Email Modal
+        changeEmailBtn.addEventListener('click', () => {
+            emailModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close Email Modal
+        function closeEmailModalFunc() {
+            emailModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Clear form and errors
+            document.getElementById('currentPasswordForEmail').value = '';
+            document.getElementById('newEmail').value = '';
+            document.getElementById('confirmNewEmail').value = '';
+            document.querySelectorAll('#emailModal .error-message').forEach(el => el.style.display = 'none');
+        }
+
+        closeEmailModal.addEventListener('click', closeEmailModalFunc);
+        cancelEmailChange.addEventListener('click', closeEmailModalFunc);
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === passwordModal) {
+                closePasswordModalFunc();
+            }
+            if (event.target === emailModal) {
+                closeEmailModalFunc();
+            }
+            if (event.target === logsModal) {
+                closeLogsModal();
+            }
+            if (event.target === sessionsModal) {
+                closeSessionsModal();
+            }
+        });
+
+        // Logs Modal Functionality
+        const logsModal = document.getElementById('logsModal');
+        const closeLogsModalBtn = document.getElementById('closeLogsModal');
+        const logsContent = document.getElementById('logsContent');
+
+        // Sample logs data - in a real app, this would come from your backend
+        const sampleLogs = [
+            { id: 1, date: '2025-06-09 10:30:45', action: 'User logged in', ip: '192.168.1.1' },
+            { id: 2, date: '2025-06-09 10:35:22', action: 'Password changed', ip: '192.168.1.1' },
+            { id: 3, date: '2025-06-08 15:12:33', action: 'Profile updated', ip: '192.168.1.1' },
+            { id: 4, date: '2025-06-07 09:45:18', action: 'User logged in', ip: '192.168.1.1' },
+            { id: 5, date: '2025-06-06 14:22:07', action: 'Email notification settings updated', ip: '192.168.1.1' }
+        ];
+
+        function openLogsModal() {
+            logsModal.style.display = 'flex';
+            // Populate logs
+            logsContent.innerHTML = `
+                <div class="logs-header">
+                    <span>Date & Time</span>
+                    <span>Action</span>
+                    <span>IP Address</span>
+                </div>
+                ${sampleLogs.map(log => `
+                    <div class="log-entry">
+                        <span class="log-date">${log.date}</span>
+                        <span class="log-action">${log.action}</span>
+                        <span class="log-ip">${log.ip}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function closeLogsModal() {
+            logsModal.style.display = 'none';
+        }
+
+        // Active Sessions Modal Functionality
+        const sessionsModal = document.getElementById('sessionsModal');
+        const closeSessionsModalBtn = document.getElementById('closeSessionsModal');
+        const sessionsContent = document.getElementById('sessionsContent');
+
+        // Sample sessions data - in a real app, this would come from your backend
+        const sampleSessions = [
+            { id: 1, device: 'Windows 10, Chrome', location: 'Nairobi, Kenya', lastActive: 'Active now', current: true },
+            { id: 2, device: 'Android, Chrome Mobile', location: 'Mombasa, Kenya', lastActive: '2 hours ago', current: false },
+            { id: 3, device: 'Mac OS X, Safari', location: 'Kisumu, Kenya', lastActive: '1 day ago', current: false }
+        ];
+
+        function openSessionsModal() {
+            sessionsModal.style.display = 'flex';
+            // Populate sessions
+            sessionsContent.innerHTML = `
+                <div class="sessions-header">
+                    <span>Device</span>
+                    <span>Location</span>
+                    <span>Last Active</span>
+                    <span>Actions</span>
+                </div>
+                ${sampleSessions.map(session => `
+                    <div class="session-entry ${session.current ? 'current-session' : ''}">
+                        <span class="session-device">
+                            ${session.current ? '<i class="fas fa-desktop"></i>' : '<i class="fas fa-mobile-alt"></i>'}
+                            ${session.device}
+                            ${session.current ? '<span class="current-badge">Current</span>' : ''}
+                        </span>
+                        <span class="session-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${session.location}
+                        </span>
+                        <span class="session-last-active">${session.lastActive}</span>
+                        <span class="session-actions">
+                            ${!session.current ? `<button class="btn btn-outline btn-sm end-session" data-session-id="${session.id}">
+                                <i class="fas fa-sign-out-alt"></i> End
+                            </button>` : ''}
+                        </span>
+                    </div>
+                `).join('')}
+            `;
+
+            // Add event listeners to end session buttons
+            document.querySelectorAll('.end-session').forEach(button => {
+                button.addEventListener('click', function() {
+                    const sessionId = this.getAttribute('data-session-id');
+                    if (confirm('Are you sure you want to end this session?')) {
+                        // In a real app, you would make an API call to end the session
+                        this.closest('.session-entry').remove();
+                        alert(`Session ${sessionId} has been ended.`);
+                    }
+                });
+            });
+        }
+
+        function closeSessionsModal() {
+            sessionsModal.style.display = 'none';
+        }
+
+        // Add event listeners for the new buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewLogsBtn = document.getElementById('viewLogsBtn');
+            const viewSessionsBtn = document.getElementById('viewSessionsBtn');
+            
+            if (viewLogsBtn) {
+                viewLogsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openLogsModal();
+                });
+            }
+            if (viewSessionsBtn) {
+                viewSessionsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openSessionsModal();
+                });
+            }
+            if (closeLogsModalBtn) {
+                closeLogsModalBtn.addEventListener('click', closeLogsModal);
+            }
+            if (closeSessionsModalBtn) {
+                closeSessionsModalBtn.addEventListener('click', closeSessionsModal);
+            }
+        });
+
+        // Password Change Validation
+        savePasswordBtn.addEventListener('click', () => {
+            let isValid = true;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPasswordSettings').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            // Reset errors
+            document.querySelectorAll('#passwordModal .error-message').forEach(el => el.style.display = 'none');
+
+            // Validate current password
+            if (!currentPassword) {
+                document.getElementById('currentPasswordError').textContent = 'Current password is required';
+                document.getElementById('currentPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+
+            // Validate new password
+            if (!newPassword) {
+                document.getElementById('newPasswordError').textContent = 'New password is required';
+                document.getElementById('newPasswordError').style.display = 'block';
+                isValid = false;
+            } else if (newPassword.length < 8) {
+                document.getElementById('newPasswordError').textContent = 'Password must be at least 8 characters long';
+                document.getElementById('newPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+
+            // Validate confirm password
+            if (newPassword !== confirmNewPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+
+            if (isValid) {
+                // Here you would typically make an API call to update the password
+                console.log('Password changed successfully');
+                alert('Your password has been updated successfully!');
+                closePasswordModalFunc();
+            }
+        });
+
+        // Email Change Validation
+        saveEmailBtn.addEventListener('click', () => {
+            let isValid = true;
+            const currentPassword = document.getElementById('currentPasswordForEmail').value;
+            const newEmail = document.getElementById('newEmail').value;
+            const confirmNewEmail = document.getElementById('confirmNewEmail').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            // Reset errors
+            document.querySelectorAll('#emailModal .error-message').forEach(el => el.style.display = 'none');
+
+            // Validate current password
+            if (!currentPassword) {
+                document.getElementById('emailPasswordError').textContent = 'Current password is required';
+                document.getElementById('emailPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+
+            // Validate new email
+            if (!newEmail) {
+                document.getElementById('newEmailError').textContent = 'New email is required';
+                document.getElementById('newEmailError').style.display = 'block';
+                isValid = false;
+            } else if (!emailRegex.test(newEmail)) {
+                document.getElementById('newEmailError').textContent = 'Please enter a valid email address';
+                document.getElementById('newEmailError').style.display = 'block';
+                isValid = false;
+            }
+
+
+            // Validate confirm email
+            if (newEmail !== confirmNewEmail) {
+                document.getElementById('confirmEmailError').textContent = 'Email addresses do not match';
+                document.getElementById('confirmEmailError').style.display = 'block';
+                isValid = false;
+            }
+
+
+            if (isValid) {
+                // Here you would typically make an API call to update the email
+                console.log('Email changed successfully');
+                alert('Your email address has been updated successfully!');
+                closeEmailModalFunc();
+            }
+        });
+    </script>
+    <script src="sidebar.js"></script>
+</body>
+</html>
