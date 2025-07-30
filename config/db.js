@@ -80,6 +80,21 @@ async function initializeDatabase() {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         `);
 
+        // Create user_logins table
+        await promisePool.query(`
+            CREATE TABLE IF NOT EXISTS user_logins (
+                login_id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                ip_address VARCHAR(45),
+                device_type ENUM('Desktop', 'Mobile', 'Tablet', 'Other') NOT NULL,
+                browser_info VARCHAR(255),
+                location VARCHAR(255),
+                status ENUM('success', 'failed') NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        `);
+
         console.log('Database and tables created successfully');
         return true;
     } catch (error) {

@@ -452,20 +452,41 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedSymptoms = [];
 
     // Event Listeners
-    symptomInput.addEventListener('input', handleSymptomInput);
-    addSymptomBtn.addEventListener('click', addSelectedSymptom);
-    clearBtn.addEventListener('click', clearAllSymptoms);
-    analyzeBtn.addEventListener('click', analyzeSymptoms);
-    backToSymptomsBtn.addEventListener('click', showSymptomInput);
-    document.addEventListener('click', closeSuggestionsOnOutsideClick);
-    document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
+    function initializeEventListeners() {
+        // Get all required elements
+        const symptomInput = document.getElementById('symptomInput');
+        const addSymptomBtn = document.getElementById('addSymptom');
+        const clearBtn = document.getElementById('clearSymptoms');
+        const analyzeBtn = document.getElementById('analyzeSymptoms');
+        const backToSymptomsBtn = document.getElementById('backToSymptoms');
+        
+        // Only add event listeners if elements exist
+        if (symptomInput) symptomInput.addEventListener('input', handleSymptomInput);
+        if (addSymptomBtn) addSymptomBtn.addEventListener('click', addSelectedSymptom);
+        if (clearBtn) clearBtn.addEventListener('click', clearAllSymptoms);
+        if (analyzeBtn) analyzeBtn.addEventListener('click', analyzeSymptoms);
+        if (backToSymptomsBtn) backToSymptomsBtn.addEventListener('click', showSymptomInput);
+        
+        // Add document-level listeners
+        document.addEventListener('click', closeSuggestionsOnOutsideClick);
+        
+        // Add modal close listeners
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                document.body.style.overflow = 'auto';
             });
-            document.body.style.overflow = 'auto';
         });
-    });
+    }
+    
+    // Initialize event listeners when DOM is fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeEventListeners);
+    } else {
+        initializeEventListeners();
+    }
 
     // Handle symptom input
     function handleSymptomInput(e) {
@@ -895,20 +916,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.symptom-checker-card').style.display = 'block';
     }
 
-    // Handle Enter key in symptom input
-    symptomInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addSelectedSymptom();
-        }
-    });
-    
-    // Add click event listener for analyze button
-    document.getElementById('analyzeSymptoms').addEventListener('click', analyzeSymptoms);
-    
-    // Add click event listener for back to symptoms button
-    document.getElementById('backToSymptoms').addEventListener('click', showSymptomInput);
-    
-    // Add click event listener for clear symptoms button
-    document.getElementById('clearSymptoms').addEventListener('click', clearAllSymptoms);
+    // Handle Enter key in symptom input - moved inside initializeEventListeners
+    if (symptomInput) {
+        symptomInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSelectedSymptom();
+            }
+        });
+    }
 });

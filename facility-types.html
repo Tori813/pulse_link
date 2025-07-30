@@ -306,7 +306,7 @@
         
         <div class="sidebar-footer">
             <div class="user-info">
-                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <img src="https://ui-avatars.com/api/?name=Victoria+Okello&background=0D8ABC&color=fff" alt="User" class="user-avatar">
                 <div class="user-details">
                     <h4>Victoria Okello</h4>
                     <span>Administrator</span>
@@ -322,6 +322,10 @@
         <div class="facility-container">
             <div class="page-header">
                 <h1 class="page-title">Facility Types</h1>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search facility types...">
+                </div>
             </div>
             
             <div class="facility-grid">
@@ -410,23 +414,25 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Search functionality
-            const searchInput = document.querySelector('.search-box input');
+            const searchInput = document.getElementById('searchInput');
             const facilityCards = document.querySelectorAll('.facility-card');
             
-            searchInput.addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                
-                facilityCards.forEach(card => {
-                    const name = card.querySelector('.facility-name').textContent.toLowerCase();
-                    const desc = card.querySelector('.facility-desc').textContent.toLowerCase();
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase().trim();
                     
-                    if (name.includes(searchTerm) || desc.includes(searchTerm)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                    facilityCards.forEach(card => {
+                        const name = card.querySelector('.facility-name').textContent.toLowerCase();
+                        const desc = card.querySelector('.facility-desc').textContent.toLowerCase();
+                        
+                        if (name.includes(searchTerm) || desc.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
                 });
-            });
+            }
         });
     </script>
 </body>

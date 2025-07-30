@@ -168,6 +168,25 @@ router.post('/login', async (req, res) => {
             });
         }
 
+        // Track login attempt
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
+        const userAgent = req.headers['user-agent'] || '';
+        const browserInfo = userAgent.slice(0, 100); // Limit to column size
+        const deviceType = /mobile/i.test(userAgent) ? 'Mobile' : 'Desktop';
+        const location = null; // Can be enhanced with GeoIP later
+
+        try {
+            await promisePool.query(
+                `INSERT INTO user_logins (
+                    user_id, ip_address, device_type, browser_info, location, status
+                ) VALUES (?, ?, ?, ?, ?, ?)`,
+                [user.user_id, ip, deviceType, browserInfo, location, 'success']
+            );
+        } catch (logError) {
+            console.error('Error logging login attempt:', logError);
+            // Don't fail the login if logging fails
+        }
+
         // Create JWT token
         const token = jwt.sign(
             { userId: user.user_id, email: user.email },

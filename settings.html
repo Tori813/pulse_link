@@ -322,7 +322,7 @@
         
         <div class="sidebar-footer">
             <div class="user-info">
-                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <img src="https://ui-avatars.com/api/?name=Victoria+Okello&background=0D8ABC&color=fff" alt="User" class="user-avatar">
                 <div class="user-details">
                     <h4>Victoria Okello</h4>
                     <span>Administrator</span>
@@ -338,7 +338,7 @@
                 <h1>Settings</h1>
                 <div class="user-info">
                     <span>Welcome, Victoria</span>
-                    <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Victoria+Okello&background=0D8ABC&color=fff" alt="User" class="user-avatar">
                 </div>
             </header>
 
@@ -763,8 +763,8 @@
     <div class="modal-overlay" id="logsModal">
         <div class="modal-content" style="max-width: 800px;">
             <button class="close-modal" id="closeLogsModal">&times;</button>
-            <h2><i class="fas fa-history"></i> Account Activity Logs</h2>
-            <p>Review your recent account activities and access history.</p>
+            <h2><i class="fas fa-history"></i> Login Activity Logs</h2>
+            <p>Review your recent login activities and access history.</p>
             <div class="logs-container" id="logsContent">
                 <!-- Logs will be populated by JavaScript -->
             </div>
@@ -933,11 +933,11 @@
 
         // Sample logs data - in a real app, this would come from your backend
         const sampleLogs = [
-            { id: 1, date: '2025-06-09 10:30:45', action: 'User logged in', ip: '192.168.1.1' },
-            { id: 2, date: '2025-06-09 10:35:22', action: 'Password changed', ip: '192.168.1.1' },
-            { id: 3, date: '2025-06-08 15:12:33', action: 'Profile updated', ip: '192.168.1.1' },
-            { id: 4, date: '2025-06-07 09:45:18', action: 'User logged in', ip: '192.168.1.1' },
-            { id: 5, date: '2025-06-06 14:22:07', action: 'Email notification settings updated', ip: '192.168.1.1' }
+            { id: 1, date: '2025-06-09 10:30:45', status: 'User logged in', ip: '192.168.1.1' },
+            { id: 2, date: '2025-06-09 10:35:22', status: 'Password changed', ip: '192.168.1.1' },
+            { id: 3, date: '2025-06-08 15:12:33', status: 'Profile updated', ip: '192.168.1.1' },
+            { id: 4, date: '2025-06-07 09:45:18', status: 'User logged in', ip: '192.168.1.1' },
+            { id: 5, date: '2025-06-06 14:22:07', status: 'Email notification settings updated', ip: '192.168.1.1' }
         ];
 
         function openLogsModal() {
@@ -946,13 +946,13 @@
             logsContent.innerHTML = `
                 <div class="logs-header">
                     <span>Date & Time</span>
-                    <span>Action</span>
+                    <span>Status</span>
                     <span>IP Address</span>
                 </div>
                 ${sampleLogs.map(log => `
                     <div class="log-entry">
                         <span class="log-date">${log.date}</span>
-                        <span class="log-action">${log.action}</span>
+                        <span class="log-status">${log.status}</span>
                         <span class="log-ip">${log.ip}</span>
                     </div>
                 `).join('')}
