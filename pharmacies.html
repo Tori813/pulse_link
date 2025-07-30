@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nairobi Pharmacies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body { transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f0f2f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header { transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: center;
+            margin: 0 auto 40px;
+            padding: 30px 20px;
+            background: #ff9800;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+            width: calc(100% + 20px);
+        }
+        .col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        @media (min-width: 768px) {
+            .col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        .pharmacy-card {
+            background: white;
+            border-radius: 0 10px 10px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 5px solid #ff9800;
+            margin-left: -5px;
+        }
+        .pharmacy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-body { transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .pharmacy-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #ff9800;
+            font-style: normal;
+        }
+        .card-title {
+            color: #ff9800;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            padding: 5px 10px;
+            background-color: #fff3e0;
+            display: inline-block;
+            border-radius: 4px;
+            margin-left: -10px;
+        }
+        .card-category {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .card-text {
+            color: #5f6368;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            flex-grow: 1;
+        }
+        .card-text i {
+            margin-right: 8px;
+            color: #ff5722;
+            font-style: normal;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #f57c00;
+        }
+        
+        /* Map Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            color: #333;
+            margin: 0;
+            font-size: 1.4em;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .card-footer {
+            margin-top: auto;
+            padding: 15px 0 5px 0;
+            text-align: left;
+            border-top: 1px solid rgba(255, 152, 0, 0.1);
+        }
+
+        .view-map-link {
+            display: inline-flex;
+            align-items: center;
+            color: #ff9800;
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: rgba(255, 152, 0, 0.05);
+            border: 1px solid rgba(255, 152, 0, 0.2);
+        }
+
+        .view-map-link:hover {
+            background-color: rgba(255, 152, 0, 0.1);
+            text-decoration: none;
+        }
+
+        .view-map-link i {
+            margin-right: 6px;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #f57c00;
+        }
+        
+    </style>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nairobi Pharmacies</h1>
+            <p class="lead">Find pharmacies and chemists across Nairobi</p>
+        </div>
+        
+        <div class="row" id="pharmacies-container">
+            <!-- Pharmacy cards will be dynamically inserted here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="facility-types.html" class="back-button">← Back to Facilities</a>
+        </div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="mapModalTitle">Location Map</h3>
+                <span class="close" onclick="closeMap()">&times;</span>
+            </div>
+            <div class="map-container">
+                <iframe id="mapFrame" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pharmacy data with map URLs
+        const pharmacies = [
+            { 
+                name: "Portal Pharmacy Ltd", 
+                location: "Banda Street, CBD",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8163872328896!2d36.817769573955886!3d-1.284072435621581!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d6a52dd27d%3A0x2a74aaaea2453b3c!2sPortal%20Pharmacy!5e0!3m2!1sen!2ske!4v1750675386994!5m2!1sen!2ske"
+            },
+            { 
+                name: "Highridge Pharmacy Ltd", 
+                location: "Krishna Park, 3rd Parklands Avenue",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.852729214968!2d36.818457173955856!3d-1.26056853559643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1753abdca18d%3A0x3c53ed18f408e950!2sHighridge%20Pharmacy%20Ltd.-%20Krishna%20Park!5e0!3m2!1sen!2ske!4v1750675424790!5m2!1sen!2ske"
+            },
+            { 
+                name: "Quintons Pharmacy", 
+                location: "Diamond Plaza, Parklands",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.856757049406!2d36.81626047395567!3d-1.2579365355936702!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f171b70502a4d%3A0xe6ce70840d34b8e2!2sQuintons%20Pharmacy%20Limited%20-%20DP%20Nairobi!5e0!3m2!1sen!2ske!4v1750675488529!5m2!1sen!2ske"
+            },
+            { 
+                name: "TF Pharmacy", 
+                location: "Nairobi West",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63821.71035083325!2d36.77763528601745!3d-1.257845033191888!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20TF%20Pharmacy%20nairobi%20west!5e0!3m2!1sen!2ske!4v1750675580256!5m2!1sen!2ske"
+            },
+            { 
+                name: "Dawa Ltd", 
+                location: "Baba Dogo Road, Muthaiga",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.873525363461!2d36.87151337395573!3d-1.2469195355822453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1593c22b25eb%3A0xe3aad0bfa7d68eb9!2sDawa%20Limited!5e0!3m2!1sen!2ske!4v1750675650823!5m2!1sen!2ske"
+            },
+            { 
+                name: "CityMed Pharmacy", 
+                location: "Near Aga Khan Hospital, Parklands",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.854028621254!2d36.82427267395572!3d-1.2597200355955425!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f16e230b0e707%3A0x5ad927489d5d4afa!2sCityMed%20Pharmacy%20Ltd!5e0!3m2!1sen!2ske!4v1750675863468!5m2!1sen!2ske"
+            },
+            { 
+                name: "Health Aid Chemist", 
+                location: "Muthithi & Mpaka Road Junction, Westlands",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.847517312068!2d36.80300587395579!3d-1.2639661356000096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f17157f3ca2c1%3A0x178b9895263735ae!2sHealth%20Aid%20Chemist!5e0!3m2!1sen!2ske!4v1750675895533!5m2!1sen!2ske"
+            },
+            { 
+                name: "Krishna Pharmacy", 
+                location: "Krishna Plaza, 3rd Parklands Avenue",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31910.78073265376!2d36.784981089144715!3d-1.263917783913618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f175fffebf3f7%3A0xd0c694346797ce1e!2sKrishna%20Pharmacy%20Ltd!5e0!3m2!1sen!2ske!4v1750675934777!5m2!1sen!2ske"
+            },
+            { 
+                name: "DawaSASA", 
+                location: "Krishna Centre, Woodvale Grove",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.846873903748!2d36.801040373955665!3d-1.2643849356004428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f170cee479ff3%3A0x429a89d78cf0ea67!2sDawaSASA!5e0!3m2!1sen!2ske!4v1750675970907!5m2!1sen!2ske"
+            },
+            { 
+                name: "Med World Pharmacy", 
+                location: "Gitanga Road, Lavington",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8060100862835!2d36.76775197395592!3d-1.2907052356288478!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1a11c58053a7%3A0xe3013578c7f6700a!2sMed%20World%20Pharmacy!5e0!3m2!1sen!2ske!4v1750676008300!5m2!1sen!2ske"
+            },
+            { 
+                name: "ABC Pharmacy Ltd", 
+                location: "ABC Place, Waiyaki Way",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.41646140357!2d36.75855190538337!3d-1.2596633816186544!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f196a7e2e8fb3%3A0xf85d989cbb0ecc60!2sAbc%20Place%20Nairobi!5e0!3m2!1sen!2ske!4v1750676122870!5m2!1sen!2ske"
+            },
+            { 
+                name: "Acacia Pharmacy", 
+                location: "ICEA Building, Kenyatta Avenue",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.823623845252!2d36.82374307395595!3d-1.2794267356165391!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f17a0884b03e5%3A0x87d5d3d1e335d43d!2sACACIA%20PHARMACY!5e0!3m2!1sen!2ske!4v1750676169792!5m2!1sen!2ske"
+            },
+            { 
+                name: "Ben-Ammi Pharmacies Ltd", 
+                location: "5th Ngong Avenue",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31910.381562860228!2d36.772170210839846!3d-1.2959952999999924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f110a8bfdc8ad%3A0xfe55d6f47195aee6!2sBEN-AMMI%20Pharmacy%20LTD!5e0!3m2!1sen!2ske!4v1750676205688!5m2!1sen!2ske"
+            },
+            { 
+                name: "Green Mark Chemist", 
+                location: "Jubilee Shopping Centre, Lang'ata Road",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63819.614276616994!2d36.685286121679674!3d-1.3408104999999917!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1acb07291525%3A0x1498957b2fc47ef3!2sGreenmark%20Pharmacy!5e0!3m2!1sen!2ske!4v1750676267925!5m2!1sen!2ske"
+            },
+            { 
+                name: "Dischem Pharmacie", 
+                location: "Victoria House, Tom Mboya Street",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8194303714768!2d36.820445373955856!3d-1.2821208356194553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d5ba5de3d5%3A0xbaa8d4a44642a6c8!2sDischem%20Pharmacie!5e0!3m2!1sen!2ske!4v1750676309066!5m2!1sen!2ske"
+            },
+            { 
+                name: "Le Grande Speciality Pharmacy", 
+                location: "5th Avenue Office Suites",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.798243477337!2d36.80552097395591!3d-1.2956472356343012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10ea0f3262c3%3A0x53a71dfd9c729bf8!2sLe%20Grande%20Speciality!5e0!3m2!1sen!2ske!4v1750676350931!5m2!1sen!2ske"
+            },
+            { 
+                name: "Donholm Pharmaceuticals Ltd", 
+                location: "Donholm Shopping Centre",
+                map: "https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d9841.452271425635!2d36.884310723821535!3d-1.301635197447865!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Donholm%20Pharmaceuticals%20Ltd%20%E2%80%93%20Donholm%20Shopping%20Centre!5e0!3m2!1sen!2ske!4v1750676977470!5m2!1sen!2ske"
+            },
+            { 
+                name: "Phoenix Pharmacy Ltd", 
+                location: "Epren Centre, Mumias South Road",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63821.172590994574!2d36.80563652167969!3d-1.2796433000000036!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f13f812b0506f%3A0xb6610eab9731aa3c!2sPhoenix%20Pharmacy%20Chemist!5e0!3m2!1sen!2ske!4v1750676585396!5m2!1sen!2ske"
+            },
+            { 
+                name: "Ava Pharmacy", 
+                location: "The Hub, Karen",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7586648986066!2d36.70117357395614!3d-1.3205444356624012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b7adb4d0f39%3A0x5ca2540057fd150b!2sAva%20Pharmacy!5e0!3m2!1sen!2ske!4v1750676641584!5m2!1sen!2ske"
+            },
+            { 
+                name: "Ace Pharmaceuticals Ltd", 
+                location: "Kenya Re Towers, Upper Hill",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.798281108836!2d36.81037807395598!3d-1.2956233356342703!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f115d30063911%3A0xd17bea606e30ddc5!2sAce%20pharmaceutical!5e0!3m2!1sen!2ske!4v1750676744569!5m2!1sen!2ske"
+            }
+        ];
+
+        // Function to create pharmacy cards
+        function createPharmacyCards() {
+            const container = document.getElementById('pharmacies-container');
+            
+            pharmacies.forEach(pharmacy => {
+                // Create column div
+                const col = document.createElement('div');
+                col.className = 'col';
+                
+                // Create card div
+                const card = document.createElement('div');
+                card.className = 'pharmacy-card';
+                
+                // Create card content
+                card.innerHTML = `
+                    <div class="card-body">
+                        <i class="pharmacy-icon">💊</i>
+                        <h3 class="card-title">${pharmacy.name}</h3>
+                        <div class="card-category">Pharmacy</div>
+                        <p class="card-text">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${pharmacy.location}</span>
+                        </p>
+                        ${pharmacy.map ? `
+                        <div class="card-footer">
+                            <a href="#" class="view-map-link" onclick="openMap('${pharmacy.name.replace(/'/g, "\\'")}', '${pharmacy.map}')">
+                                <i class="fas fa-map"></i> View on Map
+                            </a>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Append elements
+                col.appendChild(card);
+                container.appendChild(col);
+            });
+        }
+
+        // Function to open map modal
+        function openMap(pharmacyName, mapUrl) {
+            event.preventDefault();
+            const modal = document.getElementById('mapModal');
+            const modalTitle = document.getElementById('mapModalTitle');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            modalTitle.textContent = pharmacyName + ' - Location';
+            mapFrame.src = mapUrl;
+            modal.style.display = 'block';
+            
+            // Close modal when clicking outside the content
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    closeMap();
+                }
+            };
+            
+            // Close with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeMap();
+                }
+            });
+        }
+        
+        // Function to close map modal
+        function closeMap() {
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            modal.style.display = 'none';
+            // Reset the iframe source to stop any ongoing loading
+            mapFrame.src = '';
+        }
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createPharmacyCards();
+        });
+    </script>
+</body>
+</html>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/theme-switcher.js"></script>
+</head        

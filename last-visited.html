@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Visited - Pulse Link</title>
+    <link href="dashboard.css" rel="stylesheet">
+    <link href="sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes (excluding sidebar)
+            const elementsToTheme = [
+                document.documentElement, // html element
+                document.body,
+                document.querySelector('.main-content'),
+                document.querySelector('.visits-container'),
+                document.querySelector('.visits-header'),
+                document.querySelector('.visits-list'),
+                document.querySelector('.visit-detail'),
+                document.querySelector('.search-box'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('.no-visits')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get saved theme or default to system
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Apply the saved theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        });
+    </script>
+    <style>
+        .visits-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .no-visits {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: #777;
+        }
+        
+        .no-visits i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+        
+        .no-visits p {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        
+        .no-visits .no-visits-subtext {
+            font-size: 14px;
+            color: #95a5a6;
+            margin: 0;
+        }
+        
+        .visit-item {
+            display: flex;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .visit-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .visit-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .visit-icon i {
+            font-size: 20px;
+        }
+        
+        .visit-details {
+            flex: 1;
+        }
+        
+        .visit-details h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .visit-address {
+            margin: 0 0 8px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .visit-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .visit-type {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .visit-time {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .visits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .visits-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .visits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .visit-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .visit-item:last-child {
+            border-bottom: none;
+        }
+        
+        .visit-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e3f2fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #1976d2;
+            font-size: 18px;
+        }
+        
+        .visit-details {
+            flex: 1;
+        }
+        
+        .visit-facility {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+        }
+        
+        .visit-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .visit-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .visit-time {
+            margin-left: auto;
+            color: #95a5a6;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .no-visits {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="visits-container">
+            <div class="visits-header">
+                <h1 class="visits-title">Last Visited</h1>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchVisits" placeholder="Search your visits...">
+                </div>
+            </div>
+            
+            <div class="visits-list" id="visitsList">
+                <!-- Visits will be added here dynamically -->
+                <div id="noVisits" class="no-visits">
+                    <i class="fas fa-history"></i>
+                    <p>Your visited locations will appear here</p>
+                    <p class="no-visits-subtext">
+                        No visit history to display yet. Your visited locations will be listed here.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const visitsList = document.getElementById('visitsList');
+            const searchInput = document.getElementById('searchVisits');
+            const noVisits = document.getElementById('noVisits');
+            
+            // Function to get facility type icon
+            function getFacilityIcon(type) {
+                const icons = {
+                    'hospital': 'hospital',
+                    'clinic': 'stethoscope',
+                    'pharmacy': 'pills',
+                    'lab': 'microscope'
+                };
+                return icons[type] || 'map-marker-alt';
+            }
+            
+            // Function to get facility type color
+            function getFacilityColor(type) {
+                const colors = {
+                    'hospital': '#e74c3c',
+                    'clinic': '#3498db',
+                    'pharmacy': '#2ecc71',
+                    'lab': '#9b59b6'
+                };
+                return colors[type] || '#f39c12';
+            }
+            
+            // Function to render visits
+            function renderVisits(visits) {
+                if (!visits || visits.length === 0) {
+                    noVisits.style.display = 'flex';
+                    visitsList.innerHTML = '';
+                    visitsList.appendChild(noVisits);
+                    return;
+                }
+                
+                noVisits.style.display = 'none';
+                visitsList.innerHTML = '';
+                
+                visits.forEach(visit => {
+                    const visitItem = document.createElement('div');
+                    visitItem.className = 'visit-item';
+                    visitItem.innerHTML = `
+                        <div class="visit-icon" style="background-color: ${getFacilityColor(visit.type)}20;">
+                            <i class="fas fa-${getFacilityIcon(visit.type)}" style="color: ${getFacilityColor(visit.type)};"></i>
+                        </div>
+                        <div class="visit-details">
+                            <h3>${visit.name}</h3>
+                            <p class="visit-address">${visit.address}</p>
+                            <div class="visit-meta">
+                                <span class="visit-type" style="background-color: ${getFacilityColor(visit.type)}20; color: ${getFacilityColor(visit.type)};">
+                                    ${visit.type.charAt(0).toUpperCase() + visit.type.slice(1)}
+                                </span>
+                                <span class="visit-time">${visit.date}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    visitsList.appendChild(visitItem);
+                });
+            }
+            
+            // Load and display visits
+            function loadVisits() {
+                const history = JSON.parse(localStorage.getItem('visitHistory') || '[]');
+                renderVisits(history);
+            }
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const history = JSON.parse(localStorage.getItem('visitHistory') || '[]');
+                
+                if (!searchTerm) {
+                    renderVisits(history);
+                    return;
+                }
+                
+                const filtered = history.filter(visit => 
+                    visit.name.toLowerCase().includes(searchTerm) || 
+                    visit.address.toLowerCase().includes(searchTerm) ||
+                    visit.type.toLowerCase().includes(searchTerm)
+                );
+                
+                renderVisits(filtered);
+            });
+            
+            // Initial load
+            loadVisits();
+        });
+    </script>
+
+    <script src="sidebar.js"></script>
+    <script>
+        // Add active class to current nav item
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter buttons functionality
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // Here you would typically filter the visits based on the selected time period
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-box input');
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const visitItems = document.querySelectorAll('.visit-item');
+                
+                visitItems.forEach(item => {
+                    const facilityName = item.querySelector('.visit-facility').textContent.toLowerCase();
+                    if (facilityName.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+body{
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #0a2463 0%, #1a3a7a 100%);
+    color: #F8F9FA;
+    font-family: "Tahoma";
+    font-size: 17px;
+  
+}
+.form-container {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: #0a2463;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 15px 15px 15px #011f4b;
+}
+
+.form-container:hover {
+  transform: scale(1.05);
+}
+
+form{
+    margin: 0 auto;
+    max-width:500px;
+    min-width: 300px;
+    width: 60vw;
+  
+  }
+  h1, p {
+    margin: 1em auto;
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    margin: 0.5rem 0;
+  }
+  
+  form {
+    width: 60vw;
+    max-width: 500px;
+    min-width: 300px;
+    margin: 0 auto;
+    
+  }
+  fieldset {
+    border: none;
+    padding: 2rem 0;
+    border-bottom: 3px solid #001A33;
+  }
+  input{
+    width:100%;
+    margin-top: 10px ;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    min-height: 2em;
+  }
+  
+  .checkbox{
+    width: unset;
+  }
+
+  .forgot-password {
+    text-align: right;
+    margin: 10px 0;
+    color: #001A33;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .forgot-password:hover {
+    color: black;
+    text-decoration: underline;
+  }
+  input[type="submit"] {
+    display: block;
+    width: 60%;
+    margin: 0 auto;
+    height: 2em;
+    font-size: 1.1rem;
+    background-color: #001A33; 
+    color: #F8F9FA;
+}
+  
+  a{
+    color:black; 
+    font-family: impact;
+    font-style: italic;
+ }
+
+ p{
+  padding-bottom: 3px;
+  padding-top: 3px;
+ }
+
+            /* Terms & Conditions Popup Styles */
+            .terms-container {
+                position: relative;
+                display: inline-block;
+            }
+
+            .terms-link {
+                color: #0a2463;
+                text-decoration: none;
+                border-bottom: 1px dashed #0a2463;
+                transition: all 0.2s ease;
+                cursor: pointer;
+                font-weight: 500;
+            }
+
+            .terms-link:hover {
+                color: #4facfe;
+                border-bottom-color: #4facfe;
+            }
+
+            .terms-popup {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px);
+                width: 320px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                padding: 20px;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                z-index: 1000;
+                pointer-events: none;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .terms-popup::before {
+                content: '';
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-width: 8px;
+                border-style: solid;
+                border-color: white transparent transparent transparent;
+            }
+
+
+            .terms-popup h4 {
+                color: #0a2463;
+                margin-top: 0;
+                margin-bottom: 15px;
+                font-size: 1.2em;
+                font-weight: 600;
+                text-align: center;
+            }
+
+
+            .terms-content {
+                max-height: 250px;
+                overflow-y: auto;
+                padding-right: 10px;
+                font-size: 0.9em;
+                line-height: 1.5;
+                color: #333;
+                text-align: left;
+            }
+
+            .terms-content p {
+                margin: 0 0 15px 0;
+                color: #333;
+                font-size: 0.95em;
+            }
+
+            .terms-content ol {
+                padding-left: 20px;
+                margin: 0 0 15px 0;
+            }
+            .terms-content li {
+                margin-bottom: 8px;
+                color: #333;
+            }
+            /* Custom scrollbar */
+            .terms-content::-webkit-scrollbar {
+                width: 6px;
+            }
+            .terms-content::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+            .terms-content::-webkit-scrollbar-thumb {
+                background: #0a2463;
+                border-radius: 3px;
+            }
+            .terms-content::-webkit-scrollbar-thumb:hover {
+                background: #1a3a7a;
+            }
+            /* Show popup on hover */
+            .terms-container:hover .terms-popup {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(-15px);
+                pointer-events: auto;
+            }
+        

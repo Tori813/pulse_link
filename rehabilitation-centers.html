@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nairobi Rehabilitation Centers</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body { transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f0f2f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header { transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: center;
+            margin: 0 auto 40px;
+            padding: 30px 20px;
+            background: #2196f3;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .section-header {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: #2196f3;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196f3;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        .col {
+            flex: 1 0 100%;
+            padding: 10px;
+        }
+        @media (min-width: 600px) {
+            .col {
+                flex: 0 0 50%;
+            }
+        }
+        @media (min-width: 900px) {
+            .col {
+                flex: 0 0 50%;
+            }
+        }
+        @media (min-width: 1200px) {
+            .col {
+                flex: 0 0 50%;
+            }
+        }
+        .center-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid #2196f3;
+        }
+        .center-card.mental-health {
+            border-left-color: #9c27b0;
+        }
+        .center-card.physical {
+            border-left-color: #4caf50;
+        }
+        .center-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-body { transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .card-footer {
+            margin-top: auto;
+            padding: 12px 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .center-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #2196f3;
+            font-style: normal;
+        }
+        .center-icon.mental-health {
+            color: #9c27b0;
+        }
+        .center-icon.physical {
+            color: #4caf50;
+        }
+        .card-title {
+            color: #2196f3;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .card-title.mental-health {
+            color: #9c27b0;
+        }
+        .card-title.physical {
+            color: #4caf50;
+        }
+        .card-category {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card-category.mental-health {
+            background-color: #f3e5f5;
+            color: #9c27b0;
+        }
+        .card-category.physical {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .card-description {
+            color: #5f6368;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+        .card-text {
+            color: #5f6368;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .card-text i {
+            margin-right: 8px;
+            color: #2196f3;
+            font-style: normal;
+            flex-shrink: 0;
+        }
+        .card-text.mental-health i {
+            color: #9c27b0;
+        }
+        .card-text.physical i {
+            color: #4caf50;
+        }
+        .contact-info {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 0.85em;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #1976d2;
+        }
+
+        /* Map Modal Styles */
+        .map-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .map-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 900px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .map-modal.active .map-modal-content {
+            transform: translateY(0);
+        }
+
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.8);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #000;
+            background: rgba(255, 255, 255, 0.95);
+            transform: rotate(90deg);
+        }
+
+        .card-footer {
+            margin-top: auto;
+            padding: 15px 0 5px 0;
+            text-align: left;
+        }
+
+        .view-map-link {
+            display: inline-flex;
+            align-items: center;
+            color: #2196f3;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: rgba(33, 150, 243, 0.05);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+        }
+
+        .view-map-link.mental-health {
+            color: #9c27b0;
+            background-color: rgba(156, 39, 176, 0.05);
+            border-color: rgba(156, 39, 176, 0.2);
+        }
+
+        .view-map-link.physical {
+            color: #4caf50;
+            background-color: rgba(76, 175, 80, 0.05);
+            border-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .view-map-link:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+            text-decoration: none;
+        }
+
+        .view-map-link.mental-health:hover {
+            background-color: rgba(156, 39, 176, 0.1);
+        }
+
+        .view-map-link.physical:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .view-map-link i {
+            margin-right: 6px;
+        }
+
+        .view-map-link.mental-health {
+            color: #6A0DAD;
+        }
+        
+        .view-map-link.physical {
+            color: #0D6E9C;
+        }
+
+        .view-map-link.physical {
+            color: #4caf50;
+        }
+
+        .view-map-link i {
+            margin-right: 5px;
+            font-size: 0.9em;
+        }
+
+        .view-map-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+<body>
+    <!-- Map Modal -->
+    <div id="mapModal" class="map-modal">
+        <div class="map-modal-content">
+            <span class="close-modal" onclick="closeMap()">&times;</span>
+            <div class="map-container">
+                <iframe id="mapFrame" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Nairobi Rehabilitation Centers</h1>
+            <p class="lead">Specialized care for mental health, addiction, and physical rehabilitation</p>
+        </div>
+        
+        <div id="mental-health-section">
+            <h2 class="section-header">Addiction & Mental Health Rehabilitation</h2>
+            <div class="row" id="mental-health-container">
+                <!-- Mental health center cards will be inserted here -->
+            </div>
+        </div>
+        
+        <div id="physical-section">
+            <h2 class="section-header">Physical & Physiotherapy Rehabilitation</h2>
+            <div class="row" id="physical-container">
+                <!-- Physical rehab center cards will be inserted here -->
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="facility-types.html" class="back-button">← Back to Facility Types</a>
+        </div>
+    </div>
+
+    <script>
+        // Function to open map modal
+        function openMap(centerName, mapUrl) {
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            // Set the iframe source to the map URL
+            mapFrame.src = mapUrl;
+            
+            // Show the modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        }
+        
+        // Function to close map modal
+        function closeMap() {
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            // Reset the iframe source to stop loading
+            mapFrame.src = '';
+            
+            // Hide the modal
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+        
+        // Close modal when clicking outside the content
+        window.onclick = function(event) {
+            const modal = document.getElementById('mapModal');
+            if (event.target === modal) {
+                closeMap();
+            }
+        };
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById('mapModal');
+            if (event.key === 'Escape' && modal.classList.contains('active')) {
+                closeMap();
+            }
+        });
+
+        // Rehabilitation centers data
+        const mentalHealthCenters = [
+            {
+                name: "Chiromo Hospital Group",
+                description: "Specializes in psychiatric care, addiction recovery, and counseling.",
+                location: "Westlands, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31910.55727114893!2d36.77065418941831!3d-1.2819741618476426!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f173be9c30923%3A0xbebde22b2d795c02!2sChiromo%20Hospital%20Group%20-%20Westlands!5e0!3m2!1sen!2ske!4v1750673450830!5m2!1sen!2ske"
+            },
+            {
+                name: "The Raphaelites (Redhill Place)",
+                description: "Offers holistic addiction treatment and mental health support.",
+                location: "Limuru",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1591.0024333450435!2d36.92487384756205!3d-0.9691688545031724!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f35b68f892633%3A0x903dd088d7da9efa!2sTHE%20RAPHAELITES-REDHILL%20PLACE!5e0!3m2!1sen!2ske!4v1750673520857!5m2!1sen!2ske"
+            },
+            {
+                name: "Asumbi Treatment & Rehabilitation Centre",
+                description: "Faith-based recovery programs for substance abuse.",
+                location: "Karen, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042494.1372105565!2d34.40186818830163!3d-0.970171599607428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1136062859d7%3A0x728e18bae03d6b99!2sAsumbi%20Treatment%20Centre%20-%20Karen!5e0!3m2!1sen!2ske!4v1750673575246!5m2!1sen!2ske"
+            },
+            {
+                name: "Nairobi Place Addiction Treatment Centre",
+                description: "Residential and outpatient addiction treatment.",
+                location: "Karen, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7480207514946!2d36.74248907395618!3d-1.3271605356700384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1aced554c9db%3A0x650f3d5f7cd4e53c!2sNairobi%20Place%20Addiction%20Treatment%20Centre!5e0!3m2!1sen!2ske!4v1750673608781!5m2!1sen!2ske"
+            },
+            {
+                name: "Irshad Rehabilitation Centre",
+                description: "Community-based addiction recovery services.",
+                location: "Eastleigh, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8192910708003!2d36.849721573956!3d-1.282210235619561!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f112a8dc4ee85%3A0xdb467d82413fe57b!2sIrshaad%20rehabilitation%20Centre!5e0!3m2!1sen!2ske!4v1750673695621!5m2!1sen!2ske"
+            },
+            {
+                name: "Royal Victory Rehabilitation Centre",
+                description: "Offers detox, counseling, and reintegration programs.",
+                location: "Buruburu, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.871848798534!2d36.87319167395561!3d-1.2480254355833804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f15d44545e723%3A0x29ff57a260e18de6!2sRoyal%20Victory%20Hospital!5e0!3m2!1sen!2ske!4v1750673732903!5m2!1sen!2ske"
+            },
+            {
+                name: "KNH Youth Friendly Centre",
+                description: "Focuses on youth mental health and addiction support.",
+                location: "Kenyatta National Hospital, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127641.21814821217!2d36.663468743359374!3d-1.3020942000000013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10ec4e8f002f%3A0xd6b6ca540f4d4701!2sKenyatta%20National%20Hospital!5e0!3m2!1sen!2ske!4v1750673810584!5m2!1sen!2ske"
+            }, 
+            {
+                name: "Sober House Kenya",
+                description: "Structured recovery programs for alcohol and drug addiction.",
+                location: "Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1994.6698018139858!2d36.82012131638204!3d-1.2688702999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f17a0f5e5f5b5%3A0x7a1b5f9b5b5e5f5b!2sSober%20House%20Kenya!5e0!3m2!1sen!2ske!4v1750674000000!5m2!1sen!2ske"
+            },
+            {
+                name: "Teen Challenge Kenya",
+                description: "Faith-based residential recovery for youth and adults.",
+                location: "Ridgeways Estate, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.9434761913594!2d36.850211673955386!3d-1.199870435535664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f3db8ca57ff41%3A0x79fb0a610d59c810!2sTeen%20Challenge%20Of%20Kenya!5e0!3m2!1sen!2ske!4v1750673880383!5m2!1sen!2ske"
+            },
+            {
+                name: "Global Hope Rehabilitation And Rescue Centre",
+                description: "Offers counseling and residential care.",
+                location: "Ngong, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d361015.8161394628!2d36.25072493442616!3d-1.357254946905286!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f032f7f1003af%3A0xd73ac762df31abf3!2sGlobal%20Hope%20Rehabilitation%20And%20Rescue%20Centre!5e0!3m2!1sen!2ske!4v1750674094833!5m2!1sen!2ske"
+            }
+        ];
+
+        const physicalRehabCenters = [
+            {
+                name: "Tender Touch Physiotherapy & Rehab",
+                description: "Offers clinic-based, home-based, and virtual physiotherapy.",
+                location: "Nairobi CBD",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31910.347852148356!2d36.77516688837281!3d-1.298668036660443!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f115cfd577915%3A0x194ba939d77c1b34!2sTender%20Touch%20Physiotherapy%20and%20Rehabilitation%2C%20KMA%20Center%2C%20Upper%20Hill%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1750674980844!5m2!1sen!2ske"
+            },
+            {
+                name: "Moshon Physiotherapy Centres",
+                description: "Manual-based physical therapy and musculoskeletal care.",
+                location: "General Mathenge Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8600436118345!2d36.80352937395568!3d-1.255784835591427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f171278c9cadf%3A0xfb0e28e93c3044f1!2sMoshon%20Physiotherapy%20Centres!5e0!3m2!1sen!2ske!4v1750675028509!5m2!1sen!2ske"
+            },
+            {
+                name: "BSR Hospital",
+                description: "Offers orthopedic and physical rehabilitation services.",
+                location: "Limuru Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.988664659307!2d36.96463597395518!3d-1.1684699355065828!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1722597a2099%3A0x8a56c3d4a5988b00!2sBSR%20Hospital%20Nairobi!5e0!3m2!1sen!2ske!4v1750675081082!5m2!1sen!2ske"
+            },
+            {
+                name: "Aalayam Rehab Care (K) Ltd",
+                description: "Multidisciplinary rehab for physical and neurological conditions.",
+                location: "Parklands, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.855227555679!2d36.81166197395558!3d-1.2589367355947227!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f17a3f7c6c1ff%3A0x6bd8add544f5e7b9!2sAalayam%20Rehab%20Care%20(K)%20Limited!5e0!3m2!1sen!2ske!4v1750675129093!5m2!1sen!2ske"
+            },
+            {
+                name: "Lifebridge Cottage Hospital",
+                description: "Offers both mental health and physical rehabilitation services.",
+                location: "Roysambu, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.934078067949!2d36.88501767395541!3d-1.206298335541813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f3e169ced7b0b%3A0x101801a27a4ff65d!2sLifebridge%20Hospital!5e0!3m2!1sen!2ske!4v1750675201663!5m2!1sen!2ske"
+            }
+        ];
+
+        // Function to create center cards
+        function createCenterCards(centers, containerId, type) {
+            const container = document.getElementById(containerId);
+            
+            centers.forEach(center => {
+                // Create column div
+                const col = document.createElement('div');
+                col.className = 'col';
+                
+                // Create card div
+                const card = document.createElement('div');
+                card.className = `center-card ${type}`;
+                
+                // Create contact info if available
+                let contactInfo = '';
+                if (center.website) {
+                    contactInfo += `<div class="card-text"><i>🌐</i><a href="${center.website}" target="_blank">${center.website.replace(/^https?:\/\//, '')}</a></div>`;
+                }
+                if (center.email) {
+                    contactInfo += `<div class="card-text"><i>✉️</i>${center.email}</div>`;
+                }
+                if (center.phone) {
+                    contactInfo += `<div class="card-text"><i>📞</i>${center.phone}</div>`;
+                }
+                
+                // Create card content
+                card.innerHTML = `
+                    <div class="card-body">
+                        <div class="card-content">
+                            <i class="center-icon ${type}">${type === 'mental-health' ? '🧠' : '🦵'}</i>
+                            <span class="card-category ${type}">${type === 'mental-health' ? 'Mental Health & Addiction' : 'Physical Rehabilitation'}</span>
+                            <h3 class="card-title ${type}">${center.name}</h3>
+                            <div class="card-description">${center.description}</div>
+                            <p class="card-text ${type}"><i>📍</i>${center.location}</p>
+                            ${contactInfo ? `<div class="contact-info">${contactInfo}</div>` : ''}
+                        </div>
+                        ${center.mapUrl ? `
+                        <div class="card-footer">
+                            <a href="#" class="view-map-link ${type}" onclick="openMap('${center.name.replace(/'/g, "\\'")}', '${center.mapUrl}'); return false;">
+     <i class="fas fa-map"></i> View on Map
+                            </a>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Append elements
+                col.appendChild(card);
+                container.appendChild(col);
+            });
+        }
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createCenterCards(mentalHealthCenters, 'mental-health-container', 'mental-health');
+            createCenterCards(physicalRehabCenters, 'physical-container', 'physical');
+        });
+    </script>
+</body>
+</html>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/theme-switcher.js"></script>
+</head        

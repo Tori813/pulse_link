@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locations - Pulse Link</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="locations.css">
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes (excluding sidebar)
+            const elementsToTheme = [
+                document.documentElement, // html element
+                document.body,
+                document.querySelector('.main-content'),
+                document.querySelector('.locations-container'),
+                document.querySelector('.map-container'),
+                document.querySelector('.locations-list'),
+                document.querySelector('.location-card'),
+                document.querySelector('.location-details'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('.modal-content')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get saved theme or default to system
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Apply the saved theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        .locations-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .page-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            position: relative;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+        }
+        
+        .filter-dropdown {
+            position: relative;
+            min-width: 200px;
+        }
+        
+        .filter-dropdown select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #2c3e50;
+            background-color: white;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding-right: 35px;
+            cursor: pointer;
+        }
+        
+        .filter-dropdown::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            pointer-events: none;
+        }
+        
+        .locations-content {
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .locations-list {
+            width: 400px;
+            border-right: 1px solid #eee;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+        
+        .location-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        
+        .location-item:hover {
+            transform: translateX(5px);
+            background-color: #f8f9fa;
+        }
+        
+        .location-item.highlighted {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+        }
+        
+        .location-item:hover {
+            background: #f9f9f9;
+        }
+        
+        .location-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .location-address {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .location-distance {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .location-type {
+            display: inline-block;
+            font-size: 12px;
+            color: #3f51b5;
+            background: #e8eaf6;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+        
+        .map-container {
+            flex: 1;
+            margin-left: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 600px; /* Fixed height for the map */
+        }
+        
+        /* Leaflet popup styles */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .leaflet-popup-content {
+            margin: 12px 16px;
+        }
+        
+        .leaflet-popup-content h3 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .leaflet-popup-content p {
+            margin: 4px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        /* Custom marker styles */
+        .custom-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Legend styles */
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            line-height: 1.4;
+            font-size: 13px;
+        }
+        
+        .legend h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 992px) {
+            .locations-content {
+                flex-direction: column;
+            }
+            
+            .locations-list {
+                width: 100%;
+                max-height: 300px;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-controls {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-box, .filter-dropdown {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="#">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="locations-container">
+            <div class="page-header">
+                <h1 class="page-title">Healthcare Facilities</h1>
+                <div class="filter-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search locations...">
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="filterType">
+                            <option value="">All Facility Types</option>
+                            <option value="hospital">Hospitals</option>
+                            <option value="clinic">Clinics</option>
+                            <option value="pharmacy">Pharmacies</option>
+                            <option value="lab">Laboratories</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="locations-content">
+                <div class="locations-list" id="locationsList">
+                    <!-- Location items will be added here by JavaScript -->
+                </div>
+                <div class="map-container" id="map"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map
+            const map = L.map('map').setView([-1.286389, 36.817223], 12); // Default to Nairobi coordinates and zoom level 12
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Sample data for healthcare facilities with coordinates
+            const facilities = [
+                // Hospitals
+                {
+                    id: 1,
+                    name: 'Nairobi Hospital',
+                    type: 'hospital',
+                    address: 'Argwings Kodhek Road, Nairobi',
+                    phone: '+254 20 2846000',
+                    hours: '24/7',
+                    distance: '1.2 km',
+                    coordinates: [-1.2973, 36.8158]
+                },
+                {
+                    id: 2,
+                    name: 'Aga Khan Hospital',
+                    type: 'hospital',
+                    address: '3rd Parklands Avenue, Nairobi',
+                    phone: '+254 20 3662000',
+                    hours: '24/7',
+                    distance: '5.7 km',
+                    coordinates: [-1.2575, 36.8150]
+                },
+                // Clinics
+                {
+                    id: 4,
+                    name: 'The Nairobi Women\'s Clinic',
+                    type: 'clinic',
+                    address: 'Mama Ngina Street, Nairobi',
+                    phone: '+254 20 222 1000',
+                    hours: 'Mon-Fri: 8:00 AM - 6:00 PM',
+                    distance: '2.3 km',
+                    coordinates: [-1.2833, 36.8172]
+                },
+                {
+                    id: 5,
+                    name: 'AAR Healthcare Clinic',
+                    type: 'clinic',
+                    address: 'Woodvale Grove, Westlands',
+                    phone: '+254 730 444 000',
+                    hours: 'Mon-Sat: 8:00 AM - 8:00 PM',
+                    distance: '3.1 km',
+                    coordinates: [-1.2651, 36.8049]
+                },
+                {
+                    id: 6,
+                    name: 'The Surgery - Hurlingham',
+                    type: 'clinic',
+                    address: 'Lenana Road, Hurlingham',
+                    phone: '+254 20 271 3131',
+                    hours: '24/7',
+                    distance: '1.8 km',
+                    coordinates: [-1.2956, 36.8032]
+                },
+                // Pharmacies
+                {
+                    id: 7,
+                    name: 'Goodlife Pharmacy - Yaya Centre',
+                    type: 'pharmacy',
+                    address: 'Yaya Centre, Argwings Kodhek Road',
+                    phone: '+254 20 271 5680',
+                    hours: 'Daily: 8:00 AM - 10:00 PM',
+                    distance: '1.5 km',
+                    coordinates: [-1.3005, 36.8098]
+                },
+                {
+                    id: 8,
+                    name: 'HealthPlus Pharmacy - Village Market',
+                    type: 'pharmacy',
+                    address: 'Village Market, Limuru Road',
+                    phone: '+254 20 712 1570',
+                    hours: 'Daily: 8:30 AM - 9:00 PM',
+                    distance: '4.2 km',
+                    coordinates: [-1.2498, 36.8015]
+                },
+                {
+                    id: 9,
+                    name: 'Medsave Pharmacy - Westlands',
+                    type: 'pharmacy',
+                    address: 'Westlands Shopping Centre',
+                    phone: '+254 20 445 3200',
+                    hours: 'Mon-Sat: 8:00 AM - 9:00 PM',
+                    distance: '3.8 km',
+                    coordinates: [-1.2641, 36.8033]
+                },
+                // Laboratories
+                {
+                    id: 10,
+                    name: 'Lancet Laboratories - Upper Hill',
+                    type: 'lab',
+                    address: 'Ralph Bunche Road, Upper Hill',
+                    phone: '+254 709 907 000',
+                    hours: 'Mon-Fri: 7:00 AM - 8:00 PM, Sat: 8:00 AM - 4:00 PM',
+                    distance: '2.7 km',
+                    coordinates: [-1.2926, 36.8083]
+                },
+                {
+                    id: 11,
+                    name: 'Pathologists Lancet Kenya',
+                    type: 'lab',
+                    address: 'The Waterfront, Karen',
+                    phone: '+254 20 423 2000',
+                    hours: 'Mon-Fri: 7:00 AM - 6:00 PM',
+                    distance: '9.1 km',
+                    coordinates: [-1.3192, 36.7078]
+                },
+                {
+                    id: 12,
+                    name: 'Nairobi Hospital Laboratory',
+                    type: 'lab',
+                    address: 'Nairobi Hospital, Argwings Kodhek Road',
+                    phone: '+254 20 284 6000',
+                    hours: '24/7',
+                    distance: '1.2 km',
+                    coordinates: [-1.2975, 36.8160]
+                },
+                {
+                    id: 11,
+                    name: 'PathCare Laboratories Kenya',
+                    type: 'lab',
+                    address: 'The Mirage, Chiromo Road',
+                    distance: '2.8 km'
+                },
+                {
+                    id: 12,
+                    name: 'The Nairobi Hospital - Pathology Lab',
+                    type: 'lab',
+                    address: 'Argwings Kodhek Road',
+                    distance: '2.1 km'
+                }
+            ];
+
+            // DOM elements
+            const searchInput = document.getElementById('searchInput');
+            const filterType = document.getElementById('filterType');
+            const locationsList = document.getElementById('locationsList');
+            
+            // Create custom icons for different facility types
+            function createCustomIcon(type) {
+                // Define colors for different facility types
+                const colors = {
+                    'hospital': '#e74c3c',  // Red for hospitals
+                    'clinic': '#3498db',    // Blue for clinics
+                    'pharmacy': '#2ecc71',  // Green for pharmacies
+                    'lab': '#9b59b6',       // Purple for laboratories
+                    'default': '#f39c12'    // Orange for any other types
+                };
+                
+                // Get the appropriate color or use default
+                const color = colors[type] || colors['default'];
+                
+                // Define the icon HTML with the appropriate color
+                const iconHtml = `
+                    <div style="
+                        background-color: ${color};
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50% 50% 50% 0;
+                        position: relative;
+                        transform: rotate(-45deg);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+                    ">
+                        <div style="
+                            width: 10px;
+                            height: 10px;
+                            background: white;
+                            border-radius: 50%;
+                            transform: rotate(45deg);
+                        "></div>
+                    </div>
+                `;
+                
+                return L.divIcon({
+                    html: iconHtml,
+                    className: 'custom-marker',
+                    iconSize: [24, 40],
+                    iconAnchor: [12, 40],
+                    popupAnchor: [0, -36]
+                });
+            }
+            
+            // Add a legend to the map
+            function addLegend() {
+                const legend = L.control({ position: 'bottomright' });
+                
+                legend.onAdd = function(map) {
+                    const div = L.DomUtil.create('div', 'legend');
+                    const types = ['hospital', 'clinic', 'pharmacy', 'lab'];
+                    const labels = ['Hospitals', 'Clinics', 'Pharmacies', 'Laboratories'];
+                    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+                    const icons = ['hospital', 'stethoscope', 'pills', 'microscope'];
+                    
+                    div.innerHTML = `
+                        <h4>Facility Types</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${types.map((type, i) => `
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="
+                                        width: 20px;
+                                        height: 20px;
+                                        background-color: ${colors[i]};
+                                        border-radius: 50% 50% 50% 0;
+                                        transform: rotate(-45deg);
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                    ">
+                                        <i class="fas fa-${icons[i]}" style="
+                                            color: white;
+                                            font-size: 10px;
+                                            transform: rotate(45deg);
+                                        "></i>
+                                    </div>
+                                    <span style="font-size: 13px; color: #000000;">${labels[i]}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    return div;
+                };
+                
+                legend.addTo(map);
+            }
+            
+            // Function to save a visited location to history
+            function saveToHistory(facility) {
+                const visit = {
+                    id: facility.id,
+                    name: facility.name,
+                    type: facility.type,
+                    address: facility.address,
+                    timestamp: new Date().toISOString(),
+                    date: new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                };
+                
+                // Get existing history or initialize empty array
+                let history = JSON.parse(localStorage.getItem('visitHistory') || '[]');
+                
+                // Remove if already exists to avoid duplicates
+                history = history.filter(item => item.id !== facility.id);
+                
+                // Add new visit to beginning of array
+                history.unshift(visit);
+                
+                // Keep only the last 20 visits
+                if (history.length > 20) {
+                    history = history.slice(0, 20);
+                }
+                
+                // Save back to localStorage
+                localStorage.setItem('visitHistory', JSON.stringify(history));
+            }
+            
+            // Function to add markers to the map
+            function addMarkers(facilities) {
+                // Clear existing markers
+                map.eachLayer(layer => {
+                    if (layer instanceof L.Marker || layer instanceof L.LayerGroup) {
+                        map.removeLayer(layer);
+                    }
+                });
+                
+                // Clear any existing markers from facilities
+                facilities.forEach(facility => {
+                    facility.marker = null;
+                });
+                
+                // Add legend
+                addLegend();
+                
+                // Add markers for each facility
+                facilities.forEach(facility => {
+                    if (facility.coordinates) {
+                        const icon = createCustomIcon(facility.type);
+                        const marker = L.marker(facility.coordinates, { 
+                            icon: icon,
+                            opacity: 1
+                        }).addTo(map);
+                        
+                        // Store marker reference in the facility object
+                        facility.marker = marker;
+                        
+                        // Format the popup content
+                        let popupContent = `
+                            <div style="min-width: 200px;">
+                                <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px;">
+                                    <i class="fas fa-${getFacilityIcon(facility.type)}" style="color: ${getFacilityColor(facility.type)}; margin-right: 5px;"></i>
+                                    ${facility.name}
+                                </h3>
+                                <p style="margin: 5px 0; color: #555; font-size: 14px;">
+                                    <i class="fas fa-map-marker-alt" style="width: 16px; text-align: center; margin-right: 5px; color: #7f8c8d;"></i>
+                                    ${facility.address}
+                                </p>
+                        `;
+                        
+                        if (facility.phone) {
+                            popupContent += `
+                                <p style="margin: 5px 0; color: #555; font-size: 14px;">
+                                    <i class="fas fa-phone" style="width: 16px; text-align: center; margin-right: 5px; color: #7f8c8d;"></i>
+                                    ${facility.phone}
+                                </p>
+                            `;
+                        }
+                        
+                        if (facility.hours) {
+                            popupContent += `
+                                <p style="margin: 5px 0; color: #555; font-size: 14px;">
+                                    <i class="far fa-clock" style="width: 16px; text-align: center; margin-right: 5px; color: #7f8c8d;"></i>
+                                    ${facility.hours}
+                                </p>
+                            `;
+                        }
+                        
+                        if (facility.distance) {
+                            popupContent += `
+                                <p style="margin: 5px 0 0 0; color: #555; font-size: 14px;">
+                                    <i class="fas fa-walking" style="width: 16px; text-align: center; margin-right: 5px; color: #7f8c8d;"></i>
+                                    ${facility.distance} away
+                                </p>
+                            `;
+                        }
+                        
+                        popupContent += '</div>';
+                        
+                        marker.bindPopup(popupContent);
+                        
+                        // Center map on marker when location is clicked in the list
+                        const locationItem = document.querySelector(`[data-name="${facility.name}"]`);
+                        if (locationItem) {
+                            locationItem.addEventListener('click', () => {
+                                map.setView(facility.coordinates, 15);
+                                marker.openPopup();
+                                
+                                // Save to visit history
+                                saveToHistory(facility);
+                            });
+                        }
+                        
+                        // Also save to history when clicking directly on the marker popup
+                        marker.on('popupopen', () => {
+                            saveToHistory(facility);
+                        });
+                    }
+                });
+                
+                // If there are facilities with coordinates, fit bounds to show all markers
+                const facilitiesWithCoords = facilities.filter(f => f.coordinates);
+                if (facilitiesWithCoords.length > 0) {
+                    const bounds = L.latLngBounds(facilitiesWithCoords.map(f => f.coordinates));
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                }
+            }
+            
+            // Helper function to get facility icon
+            function getFacilityIcon(type) {
+                const icons = {
+                    'hospital': 'hospital',
+                    'clinic': 'stethoscope',
+                    'pharmacy': 'pills',
+                    'lab': 'microscope'
+                };
+                return icons[type] || 'map-marker-alt';
+            }
+            
+            // Helper function to get facility color
+            function getFacilityColor(type) {
+                const colors = {
+                    'hospital': '#e74c3c',
+                    'clinic': '#3498db',
+                    'pharmacy': '#2ecc71',
+                    'lab': '#9b59b6'
+                };
+                return colors[type] || '#f39c12';
+            }
+            
+            // Function to render location items
+            function renderLocations(filteredFacilities = facilities) {
+                locationsList.innerHTML = '';
+                
+                if (filteredFacilities.length === 0) {
+                    locationsList.innerHTML = '<div class="no-results">No facilities found matching your criteria.</div>';
+                    return;
+                }
+                
+                filteredFacilities.forEach(facility => {
+                    const item = document.createElement('div');
+                    item.className = 'location-item';
+                    item.dataset.id = facility.id;
+                    
+                    item.innerHTML = `
+                        <div class="location-name">
+                            ${facility.name}
+                            <span class="location-type">${facility.type.charAt(0).toUpperCase() + facility.type.slice(1)}</span>
+                        </div>
+                        <div class="location-address">${facility.address}</div>
+                        <span class="location-distance">${facility.distance} away</span>
+                    `;
+                    
+                    item.addEventListener('click', () => {
+                        // Remove active class from all items
+                        document.querySelectorAll('.location-item').forEach(el => {
+                            el.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked item
+                        item.classList.add('active');
+                    });
+                    
+                    locationsList.appendChild(item);
+                });
+                
+                // Activate first item by default
+                const firstItem = locationsList.querySelector('.location-item');
+                if (firstItem) {
+                    firstItem.classList.add('active');
+                }
+            }
+            
+            // Filter functionality
+            function filterLocations() {
+                const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+                const typeFilter = document.getElementById('filterType').value;
+                const facilityElements = document.querySelectorAll('.location-item');
+                let hasVisibleMarkers = false;
+                
+                // If no search term and no type filter, show all
+                if (!searchTerm && !typeFilter) {
+                    facilityElements.forEach(el => el.style.display = 'flex');
+                    facilities.forEach(facility => {
+                        if (facility.marker) {
+                            map.addLayer(facility.marker);
+                        }
+                    });
+                    return;
+                }
+
+                facilities.forEach((facility, index) => {
+                    const facilityElement = facilityElements[index];
+                    if (!facilityElement) return;
+                    
+                    const matchesSearch = searchTerm === '' || 
+                                        facility.name.toLowerCase().includes(searchTerm) || 
+                                        facility.address.toLowerCase().includes(searchTerm);
+                    const matchesType = !typeFilter || facility.type === typeFilter;
+                    const isVisible = matchesSearch && matchesType;
+                    
+                    // Toggle visibility in the list
+                    facilityElement.style.display = isVisible ? 'flex' : 'none';
+                    
+                    // Toggle marker visibility on the map
+                    if (facility.marker) {
+                        if (isVisible) {
+                            facility.marker.addTo(map);
+                            hasVisibleMarkers = true;
+                            
+                            // If this facility matches the search, center the map on it
+                            if (searchTerm !== '' && (facility.name.toLowerCase().includes(searchTerm) || 
+                                                    facility.address.toLowerCase().includes(searchTerm))) {
+                                map.setView(facility.coordinates, 15);
+                                facility.marker.openPopup();
+                            }
+                        } else {
+                            map.removeLayer(facility.marker);
+                        }
+                    }
+                });
+                
+                // If no markers are visible after filtering, show a message
+                const noResults = document.getElementById('noResults');
+                if (!hasVisibleMarkers) {
+                    if (!noResults) {
+                        const noResultsElement = document.createElement('div');
+                        noResultsElement.id = 'noResults';
+                        noResultsElement.style.padding = '20px';
+                        noResultsElement.style.textAlign = 'center';
+                        noResultsElement.style.color = '#666';
+                        noResultsElement.textContent = 'No facilities found matching your search.';
+                        locationsList.appendChild(noResultsElement);
+                    }
+                } else if (noResults) {
+                    noResults.remove();
+                }
+                
+                // If there are visible markers, fit the map to show them all
+                if (hasVisibleMarkers) {
+                    const visibleFacilities = facilities.filter((facility, index) => {
+                        const matchesSearch = searchTerm === '' || 
+                                          facility.name.toLowerCase().includes(searchTerm) || 
+                                          facility.address.toLowerCase().includes(searchTerm);
+                        const matchesType = !typeFilter || facility.type === typeFilter;
+                        return matchesSearch && matchesType && facility.coordinates;
+                    });
+                    
+                    if (visibleFacilities.length > 0) {
+                        const bounds = L.latLngBounds(visibleFacilities.map(f => f.coordinates));
+                        map.fitBounds(bounds, { padding: [50, 50] });
+                    }
+                }
+            }
+            
+            // Event listeners
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.trim().toLowerCase();
+                filterLocations();
+            });
+            
+            document.getElementById('filterType').addEventListener('change', filterLocations);
+            
+            // Add click handler for location items to highlight them
+            document.addEventListener('click', function(e) {
+                const locationItem = e.target.closest('.location-item');
+                if (locationItem) {
+                    // Remove highlight from all items
+                    document.querySelectorAll('.location-item').forEach(item => {
+                        item.classList.remove('highlighted');
+                    });
+                    
+                    // Add highlight to clicked item
+                    locationItem.classList.add('highlighted');
+                    
+                    // Find the corresponding facility and center the map on it
+                    const facilityName = locationItem.getAttribute('data-name');
+                    const facility = facilities.find(f => f.name === facilityName);
+                    if (facility && facility.marker) {
+                        map.setView(facility.coordinates, 15);
+                        facility.marker.openPopup();
+                    }
+                }
+            });
+            
+            // Initial render and map initialization
+            renderLocations();
+            addMarkers(facilities);
+            
+            // Make sure the map is properly sized
+            setTimeout(() => {
+                map.invalidateSize();
+                // Fit map to show all markers
+                const bounds = L.latLngBounds(facilities
+                    .filter(f => f.coordinates)
+                    .map(f => f.coordinates));
+                if (bounds.isValid()) {
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                }
+            }, 100);
+            
+            // Toggle sidebar
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                document.querySelector('.main-content').classList.toggle('expanded');
+            });
+            locateControl.start();
+        });
+    </script>
+</body>
+</html>

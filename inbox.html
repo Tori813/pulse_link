@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - Pulse Link</title>
+    <link href="dashboard.css" rel="stylesheet">
+    <link href="sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        /* Welcome Message Styles */
+        .welcome-message-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .welcome-icon i {
+            font-size: 32px;
+            color: #1976d2;
+        }
+        
+        .welcome-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-text {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .welcome-subtext {
+            color: #95a5a6;
+            font-size: 14px;
+        }
+        
+        /* Dark Mode Styles */
+        .dark-mode .welcome-icon {
+            background-color: #1e3a8a;
+        }
+        
+        .dark-mode .welcome-icon i {
+            color: #60a5fa;
+        }
+        
+        .dark-mode .welcome-title,
+        .dark-mode .welcome-text,
+        .dark-mode .welcome-subtext {
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes (excluding sidebar)
+            const elementsToTheme = [
+                document.documentElement, // html element
+                document.body,
+                document.querySelector('.main-content'),
+                document.querySelector('.inbox-container'),
+                document.querySelector('.inbox-header'),
+                document.querySelector('.message-list'),
+                document.querySelector('.message-detail'),
+                document.querySelector('.search-box'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('.modal-content')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get saved theme or default to system
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Apply the saved theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        });
+    </script>
+    <style>
+        .inbox-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .inbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .inbox-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .message-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .message-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: flex-start;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .message-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .message-item.unread {
+            background-color: #f0f7ff;
+        }
+        
+        .message-checkbox {
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+        
+        .message-content {
+            flex: 1;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+        }
+        
+        .message-preview {
+            color: #666;
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+        
+        .message-time {
+            color: #95a5a6;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-left: 15px;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .search-box:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.114);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+            
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="inbox.html">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="inbox-container">
+            <div class="inbox-header">
+                <h1 class="inbox-title">Inbox</h1>
+                <div class="search-box">
+                    <input type="text" placeholder="Search messages..." style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 250px;">
+                </div>
+            </div>
+            
+            <div class="welcome-message" style="text-align: center; padding: 60px 20px;">
+                <div class="welcome-message-container">
+                    <div class="welcome-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h2 class="welcome-title">Welcome to Your Inbox!</h2>
+                    <p class="welcome-text">
+                        You're all set! This is where you'll find important notifications and messages about your account and activities.
+                    </p>
+                    <p class="welcome-subtext">
+                        No new messages yet. We'll notify you when you have new updates.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="message-actions">
+                <button class="btn btn-primary">Mark as Read</button>
+                <button class="btn">Mark as Unread</button>
+                <button class="btn btn-danger" style="margin-left: auto;">Delete Selected</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script>
+        // Add active class to current nav item
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Toggle message selection
+            const checkboxes = document.querySelectorAll('.message-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function(e) {
+                    e.stopPropagation();
+                    const messageItem = this.closest('.message-item');
+                    if (this.checked) {
+                        messageItem.classList.add('selected');
+                    } else {
+                        messageItem.classList.remove('selected');
+                    }
+                });
+            });
+            
+            // Mark as read/unread functionality
+            const markAsReadBtn = document.querySelector('.btn-primary');
+            const markAsUnreadBtn = document.querySelectorAll('.btn')[1];
+            const deleteBtn = document.querySelector('.btn-danger');
+            
+            markAsReadBtn.addEventListener('click', function() {
+                const selectedMessages = document.querySelectorAll('.message-checkbox:checked');
+                selectedMessages.forEach(checkbox => {
+                    const messageItem = checkbox.closest('.message-item');
+                    messageItem.classList.remove('unread');
+                    checkbox.checked = false;
+                });
+            });
+            
+            markAsUnreadBtn.addEventListener('click', function() {
+                const selectedMessages = document.querySelectorAll('.message-checkbox:checked');
+                selectedMessages.forEach(checkbox => {
+                    const messageItem = checkbox.closest('.message-item');
+                    messageItem.classList.add('unread');
+                    checkbox.checked = false;
+                });
+            });
+            
+            deleteBtn.addEventListener('click', function() {
+                const selectedMessages = document.querySelectorAll('.message-checkbox:checked');
+                selectedMessages.forEach(checkbox => {
+                    const messageItem = checkbox.closest('.message-item');
+                    messageItem.remove();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

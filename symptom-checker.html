@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker - Pulse Link</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="symptom-checker.css">
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes (excluding sidebar)
+            const elementsToTheme = [
+                document.documentElement, // html element
+                document.body,
+                document.querySelector('.main-content'),
+                document.querySelector('.symptom-checker-container'),
+                document.querySelector('.symptom-checker-card'),
+                document.querySelector('.checker-header'),
+                document.querySelector('.checker-body'),
+                document.querySelector('.symptom-search'),
+                document.querySelector('.selected-symptoms'),
+                document.querySelector('.additional-questions'),
+                document.querySelector('.checker-actions'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('.modal-content')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get saved theme or default to system
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Apply the saved theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        });
+    </script>
+    <style>
+        /* Results Container Styles */
+        #resultsContainer {
+            position: relative !important;
+            background: white !important;
+            padding: 25px !important;
+            margin: 20px 0 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            z-index: 1000 !important;
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            border: 2px solid #e0e0e0 !important;
+        }
+        
+        .symptom-checker-card {
+            transition: all 0.3s ease;
+        }
+        
+        /* Results Grid Layout */
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        /* Condition Card Styling */
+        .condition-card {
+            border: 1px solid #e0e0e0 !important;
+            border-radius: 8px !important;
+            padding: 20px !important;
+            background: #fff !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .condition-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Condition Header */
+        .condition-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .condition-header h5 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* Badge Styling */
+        .badge {
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 4px 10px !important;
+            border-radius: 12px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .bg-primary {
+            background-color: #007bff !important;
+        }
+        
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+        
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        
+        /* Condition Body */
+        .condition-desc {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .severity {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        
+        .severity-label {
+            margin-right: 8px;
+            color: #666;
+        }
+        
+        .treatment {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        
+        .treatment h6 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+        
+        .treatment p {
+            margin: 0;
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Custom spinner styles */
+        .spinner-analyzing {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.35em;
+            animation: spinner-rotate 0.75s linear infinite;
+        }
+        @keyframes spinner-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Toggle -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-bell"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span> 
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <div id="resultsContainer" class="mt-4 d-none">
+                        <div id="emergencyWarning" class="alert alert-danger d-none" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> Severe condition detected. Please seek immediate medical attention.
+                        </div>
+                        <h3>Analysis Results</h3>
+                        <div id="conditionsList" class="row"></div>
+                    </div>
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Symptom Checker</h1>
+                <div class="user-info">
+                    <span>Welcome, <span>Victoria</span></span>
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                </div>
+            </header>
+
+            <div class="symptom-checker-container">
+                <div class="symptom-checker-card">
+                    <div class="checker-header">
+                        <h2><i class="fas fa-stethoscope"></i> Check Your Symptoms</h2>
+                        <p>Select your symptoms from the list below and we'll help identify possible conditions.</p>
+                    </div>
+
+                    <div class="checker-body">
+                        <div class="symptom-search">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="symptomInput" placeholder="Type a symptom (e.g., headache, fever)" autocomplete="off">
+                                <div class="suggestions" id="symptomSuggestions"></div>
+                            </div>
+                            <button class="btn btn-primary" id="addSymptom">
+                                <i class="fas fa-plus"></i> Add Symptom
+                            </button>
+                        </div>
+
+                        <div class="selected-symptoms" id="selectedSymptoms">
+                            <h3>Selected Symptoms</h3>
+                            <div class="symptoms-list" id="symptomsList">
+                                <p class="no-symptoms">No symptoms selected yet. Start typing above to add symptoms.</p>
+                            </div>
+                        </div>
+
+                        <div class="additional-questions" id="additionalQuestions">
+                            <!-- Dynamic questions will appear here -->
+                        </div>
+
+                        <div class="checker-actions">
+                            <button class="btn btn-secondary" id="clearSymptoms">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                            <button class="btn btn-primary" id="analyzeSymptoms" disabled>
+                                <i class="fas fa-search"></i> Analyze Symptoms
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Symptom Checker Content Ends Here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Symptom Detail Modal -->
+    <div class="modal" id="symptomDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="symptomModalTitle">Symptom Details</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body" id="symptomModalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="symptom-checker.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

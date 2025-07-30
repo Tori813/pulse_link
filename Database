@@ -1,0 +1,137 @@
+CREATE DATABASE pulse_link;
+USE pulse_link;
+
+CREATE TABLE users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_profiles (
+    profile_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    role_name VARCHAR(20),
+    gender ENUM('Male', 'Female', 'Other'),
+    alternative_phone_number VARCHAR(20),
+    emergency_contact_name VARCHAR(20),
+    relationship VARCHAR(20),
+    emergency_contact VARCHAR(20),
+    address VARCHAR(255),
+    city VARCHAR(100),
+    country VARCHAR(100),
+    profile_picture_url VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE roles (
+    role_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    full_name VARCHAR(100),
+	email VARCHAR(100),
+    role_name VARCHAR(100) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+   );
+
+CREATE TABLE user_inbox (
+    inbox_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    item_type ENUM('notification', 'message', 'reminder') NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE messages (
+  message_id INT PRIMARY KEY AUTO_INCREMENT,
+  sender_id INT NOT NULL,
+  recipient_id INT NOT NULL,
+  sender_role VARCHAR(100),
+  message_content TEXT NOT NULL,
+  sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  read_at TIMESTAMP NULL,
+  is_deleted BOOLEAN DEFAULT FALSE,
+  parent_message_id INT DEFAULT NULL,
+  attachment_url VARCHAR(255),
+  FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (recipient_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (parent_message_id) REFERENCES messages(message_id) ON DELETE CASCADE
+);
+
+CREATE TABLE message_threads (
+    thread_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    other_user_id INT NOT NULL,
+    last_message_id INT DEFAULT NULL,
+    last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    unread_count INT DEFAULT 0,
+    is_archived BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (other_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (last_message_id) REFERENCES messages(message_id) ON DELETE SET NULL
+);
+
+CREATE TABLE user_logins (
+    login_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    logout_time TIMESTAMP NULL,
+    ip_address VARCHAR(45),
+    device_type VARCHAR(50),
+    browser_info VARCHAR(100),
+    location VARCHAR(100),
+    status ENUM('success', 'failed') NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_sessions (
+    session_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    device_info VARCHAR(100),
+    ip_address VARCHAR(45),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_preferences (
+    preference_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    theme_preference ENUM('light', 'dark', 'system') DEFAULT 'system',
+    notification_settings JSON,
+    language_preference VARCHAR(50) DEFAULT 'English',
+    timezone VARCHAR(50) DEFAULT 'UTC',
+    default_view VARCHAR(50),
+    email_notifications BOOLEAN DEFAULT TRUE,
+    push_notifications BOOLEAN DEFAULT TRUE,
+    message_notifications BOOLEAN DEFAULT TRUE,
+    privacy_settings JSON,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_visits (
+    visit_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    page_url VARCHAR(255) NOT NULL,
+    visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duration INT, -- duration in seconds
+    device_info VARCHAR(100),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
+
+

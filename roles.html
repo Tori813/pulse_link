@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Roles Management - Pulse Link</title>
+    <link href="dashboard.css" rel="stylesheet">
+    <link href="sidebar.css" rel="stylesheet">
+    <link href="dark-theme.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        .roles-container {
+            padding: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-title {
+            font-size: 24px;
+            color: white;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .users-table th, 
+        .users-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .users-table th {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #0d47a1;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #90caf9;
+        }
+        
+        .users-table tr:first-child th:first-child {
+            border-top-left-radius: 10px;
+        }
+        
+        .users-table tr:first-child th:last-child {
+            border-top-right-radius: 10px;
+        }
+        
+        .users-table tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+        
+        .users-table tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+        
+        .users-table tbody tr {
+            background: white;
+        }
+        
+        .users-table tbody tr:nth-child(even) {
+            background-color: #f8f9ff;
+        }
+        
+        .users-table tbody tr:hover {
+            background-color: #f1f8ff;
+            transform: translateX(2px);
+            box-shadow: 2px 0 0 0 #4facfe inset;
+        }
+        
+        .role-select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn i {
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #4facfe 0%, #f8f9ff 80%);
+            color: #000000; /* Black text for better visibility */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            padding: 14px 28px;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+            background: #3a9df8; /* Slightly darker blue on hover */
+        }
+        
+        .btn-sm {
+            padding: 8px 18px;
+            font-size: 14px;
+            border-radius: 20px;
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #4facfe 0%, #f8f9ff 80%);
+            color: #000000; /* Black text for better visibility */
+        }
+        
+        .btn-success:hover {
+            background: #3a9df8; /* Slightly darker blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, #4facfe 0%, #f8f9ff 80%);
+            color: #000000; /* Black text for better visibility */
+        }
+        
+        .btn-warning:hover {
+            background: #3a9df8; /* Slightly darker blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
+        }
+        
+        .save-btn {
+            background: linear-gradient(to right, #4facfe 0%, #f8f9ff 80%);
+            color: #000000; /* Black text for better visibility */
+            cursor: not-allowed;
+            border: none;
+        }
+        
+        .save-btn:not([disabled]) {
+            cursor: pointer;
+            background: linear-gradient(to right, #4facfe 0%, #f8f9ff 80%);
+        }
+        
+        .save-btn:not([disabled]):hover {
+            background: #3a9df8; /* Slightly darker blue on hover */
+        }
+        
+        .search-bar {
+            margin: 0 0 25px 0;
+            position: relative;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e0e6ff;
+            border-radius: 30px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="roles.html">
+                            <i class="fas fa-user-shield"></i>
+                            <span>User Roles</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-name">Admin User</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+                <a href="#" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="roles-container">
+            <div class="page-header">
+                <h1 class="page-title">User Roles Management</h1>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search users..." id="searchInput">
+            </div>
+            
+            <div class="table-responsive">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Current Role</th>
+                            <th>New Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Sample data - In a real app, this would be populated from a database -->
+                        <tr>
+                            <td>Victoria</td>
+                            <td>Victoria@gmail.com</td>
+                            <td>Main Administrator</td>
+                            <td>
+                                <select class="role-select" data-user-id="3" disabled>
+                                    <option value="main_admin" selected>Main Administrator</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="save-btn" disabled>Cannot Change</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>john.doe@example.com</td>
+                            <td>Patient</td>
+                            <td>
+                                <select class="role-select" data-user-id="1">
+                                    <option value="admin">Administrator</option>
+                                    <option value="patient" selected>Patient</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="save-btn" onclick="saveRole(1)" disabled>Save</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jane Smith</td>
+                            <td>jane.smith@example.com</td>
+                            <td>Administrator</td>
+                            <td>
+                                <select class="role-select" data-user-id="2">
+                                    <option value="admin" selected>Administrator</option>
+                                    <option value="patient">Patient</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="save-btn" onclick="saveRole(2)" disabled>Save</button>
+                            </td>
+                        </tr>
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme switching functionality (same as dashboard)
+        function switchTheme(theme) {
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            const elementsToTheme = [
+                document.documentElement,
+                document.body,
+                document.querySelector('.main-content'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('main')
+            ];
+            
+            elementsToTheme.forEach(element => {
+                if (element) {
+                    element.classList.remove('light-mode', 'dark-mode');
+                    element.classList.add(theme + '-mode');
+                }
+            });
+            
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme initialization
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            switchTheme(savedTheme);
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterUsers);
+            }
+            
+            // Enable/disable save buttons when role selection changes
+            const roleSelects = document.querySelectorAll('.role-select');
+            roleSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const userId = this.dataset.userId;
+                    const saveBtn = this.closest('tr').querySelector('.save-btn');
+                    if (saveBtn && !saveBtn.hasAttribute('disabled')) {
+                        saveBtn.disabled = false;
+                    }
+                });
+            });
+            
+            // Toggle sidebar
+            const menuToggle = document.getElementById('menuToggle');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('sidebar-collapsed');
+                });
+            }
+        });
+        
+        // Filter users based on search input
+        function filterUsers() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('usersTableBody');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const name = rows[i].getElementsByTagName('td')[0];
+                const email = rows[i].getElementsByTagName('td')[1];
+                if (name || email) {
+                    const nameText = name.textContent || name.innerText;
+                    const emailText = email.textContent || email.innerText;
+                    if (nameText.toLowerCase().indexOf(filter) > -1 || 
+                        emailText.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+        
+        // Save role function
+        function saveRole(userId) {
+            const select = document.querySelector(`.role-select[data-user-id="${userId}"]`);
+            const saveBtn = document.querySelector(`button[onclick="saveRole(${userId})"]`);
+            
+            if (!select || !saveBtn) return;
+            
+            const newRole = select.value;
+            const userName = select.closest('tr').querySelector('td').textContent;
+            
+            // In a real application, you would make an API call here to update the user's role
+            console.log(`Updating user ${userName} (ID: ${userId}) to role: ${newRole}`);
+            
+            // Show success message
+            alert(`Successfully updated ${userName}'s role to ${getRoleDisplayName(newRole)}`);
+            
+            // Update the current role display
+            const currentRoleCell = select.closest('tr').querySelector('td:nth-child(3)');
+            if (currentRoleCell) {
+                currentRoleCell.textContent = getRoleDisplayName(newRole);
+            }
+            
+            // Disable the save button again
+            saveBtn.disabled = true;
+        }
+        
+        // Helper function to get display name for roles
+        function getRoleDisplayName(role) {
+            const roles = {
+                'main_admin': 'Main Administrator',
+                'admin': 'Administrator',
+                'patient': 'Patient'
+            };
+            return roles[role] || role;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nairobi Hospitals</title>
+    <!-- Add Font Awesome for map icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/theme-switcher.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header {
+            text-align: center;
+            margin: 0 auto 40px;
+            padding: 30px 20px;
+            background: #3f51b5;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+            width: calc(100% + 20px);
+        }
+        .col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        @media (min-width: 768px) {
+            .col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        .hospital-card {
+            background: white !important;
+            border-radius: 0 10px 10px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border-left: 5px solid #3f51b5;
+            margin-left: -5px;
+            color: #333333 !important;
+        }
+        
+        /* Override dark theme for hospital cards */
+        .dark-mode .hospital-card {
+            background: white !important;
+            color: #333333 !important;
+            background-color: white !important;
+            background-image: none !important;
+        }
+        
+        /* Force all child elements to have white background */
+        /* Force hospital cards to be white in both themes */
+        .hospital-card-light,
+        .hospital-card-light *,
+        .dark-mode .hospital-card-light,
+        .dark-mode .hospital-card-light * {
+            background-color: white !important;
+            background: white !important;
+            color: #333333 !important;
+            background-image: none !important;
+        }
+        
+        /* Apply border only to the main card */
+        .hospital-card-light,
+        .dark-mode .hospital-card-light {
+            border-left: 5px solid #3f51b5 !important;
+        }
+        
+        /* Ensure text is visible on white background */
+        .hospital-card-light .card-body .card-description,
+        .hospital-card-light .card-body .card-text,
+        .hospital-card-light .card-body .card-category,
+        .hospital-card-light .card-body .card-footer,
+        .dark-mode .hospital-card-light .card-body .card-description,
+        .dark-mode .hospital-card-light .card-body .card-text,
+        .dark-mode .hospital-card-light .card-body .card-category,
+        .dark-mode .hospital-card-light .card-body .card-footer {
+            color: #1a237e !important;
+        }
+        
+        /* More specific selector for card title */
+        .hospital-card-light .card-body .card-title,
+        .dark-mode .hospital-card-light .card-body .card-title {
+            color: #1a237e !important;
+            background-color: #9fa8da!important;
+            padding: 8px 12px !important;
+            margin: 0 0 10px 0 !important;
+            display: block !important;
+            border-radius: 6px !important;
+        }
+        
+        .hospital-card-light .card-category {
+            color: #1a237e !important; /* Lighter blue for category */
+            background-color: #9fa8da !important;
+        }
+        
+        /* Specific styles for card text */
+        .hospital-card-light .card-body .card-text,
+        .dark-mode .hospital-card-light .card-body .card-text {
+            color: #2c3e50 !important;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin: 10px 0 !important;
+        }
+        
+        /* Style for location text */
+        .hospital-card-light .card-body .card-text i,
+        .dark-mode .hospital-card-light .card-body .card-text i {
+            margin-right: 5px;
+            color: #3f51b5 !important;
+        }
+        
+        /* Style for View on Map link */
+        .hospital-card-light .map-icon {
+            color: #1a237e !important; /* Primary blue color */
+            background-color: #9fa8da !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            transition: color 0.2s ease !important;
+        }
+        
+        .hospital-card-light .map-icon:hover {
+            color: #303f9f !important; /* Darker blue on hover */
+            text-decoration: underline !important;
+        }
+        
+        .hospital-card-light .map-icon i {
+            font-size: 14px !important;
+        }
+        
+        /* Remove any box shadow that might be making it appear dark */
+        .hospital-card-light {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Ensure card content stays light */
+        .card-body,
+        .card-title,
+        .card-description,
+        .card-text,
+        .card-footer {
+            color: #333333 !important;
+            background-color: white !important;
+        }
+        
+        .hospital-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .hospital-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #3f51b5;
+            font-style: normal;
+        }
+        .card-title {
+            color: #3f51b5;
+            background-color: #9fa8da !important;
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 1.4;
+            padding: 8px 12px;
+            display: block;
+            border-radius: 6px;
+            margin: 0 0 10px 0;
+            box-shadow: 0 2px 4px rgba(63, 81, 181, 0.15);
+            border: 1px solid rgba(63, 81, 181, 0.25);
+            transition: all 0.2s ease;
+        }
+        
+        .hospital-card:hover .card-title {
+            box-shadow: 0 4px 8px rgba(63, 81, 181, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .card-title-container {
+            margin-bottom: 10px;
+        }
+        
+        .card-category {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #e8eaf6;
+            color: #3f51b5;
+            border: 1px solid rgba(63, 81, 181, 0.3);
+            box-shadow: 0 1px 2px rgba(63, 81, 181, 0.1);
+        }
+        
+        .card-description {
+            color: #5f6368;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .card-text {
+            color: #5f6368;
+            font-size: 0.95em;
+            margin-bottom: 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .card-text i {
+            margin-right: 8px;
+            color: #e53935;
+            font-style: normal;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3f51b5;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #303f9f;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .card-footer {
+            margin-top: auto;
+            padding: 15px 0 5px 0;
+            text-align: left;
+        }
+
+        .map-icon {
+            display: inline-flex;
+            align-items: center;
+            color: #3f51b5;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background-color: rgba(63, 81, 181, 0.1);
+            border: 1px solid rgba(63, 81, 181, 0.3);
+            box-shadow: 0 1px 2px rgba(63, 81, 181, 0.1);
+        }
+
+        .map-icon:hover {
+            color: #1a237e;
+            background-color: rgba(63, 81, 181, 0.15);
+            border-color: #3f51b5;
+            box-shadow: 0 2px 6px rgba(63, 81, 181, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .map-icon i {
+            margin-right: 6px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nairobi Hospitals</h1>
+            <p class="lead">Find the best healthcare facilities in Nairobi</p>
+        </div>
+        
+        <div class="row" id="hospitals-container">
+            <!-- Hospital cards will be dynamically inserted here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="facility-types.html" class="back-button">← Back to Facilities</a>
+        </div>
+    </div>
+
+    <script>
+        // Hospital data
+        const hospitals = [
+            {
+                name: "Aga Khan University Hospital",
+                description: "A 300-bed referral and teaching hospital offering specialized care and diagnostics.",
+                location: "Parklands, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31910.801673060287!2d36.78776531083985!3d-1.2622124999999933!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1719780ea80b%3A0xf3671ea832a7521b!2sAga%20Khan%20University%20Hospital!5e0!3m2!1sen!2ske!4v1750659728880!5m2!1sen!2ske"
+            },
+            {
+                name: "The Nairobi Hospital",
+                description: "One of the oldest private hospitals in Kenya, known for high-end services and surgical care.",
+                location: "Upper Hill, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.798692490779!2d36.80134337395592!3d-1.2953620356339828!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f109555d32b53%3A0x742fed8596c675f0!2sThe%20Nairobi%20Hospital!5e0!3m2!1sen!2ske!4v1750659681796!5m2!1sen!2ske"
+            },
+            {
+                name: "MP Shah Hospital",
+                description: "A modern 217-bed facility with ISO certification and multiple branches including Village Market.",
+                location: "Parklands, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.393169958943!2d36.793643105384575!3d-1.263461381453153!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1717c90eb869%3A0xc5bc47caa824c2aa!2sMP%20Shah%20Hospital!5e0!3m2!1sen!2ske!4v1750659849802!5m2!1sen!2ske"
+            },
+            {
+                name: "Gertrude's Children's Hospital",
+                description: "The most established pediatric hospital in East and Central Africa.",
+                location: "Muthaiga, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.859659907192!2d36.82914967395561!3d-1.2560362355916728!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f16fb2567bbcb%3A0xef95cf32377903a3!2sGertrude's%20Children's%20Hospital-Muthaiga!5e0!3m2!1sen!2ske!4v1750660013866!5m2!1sen!2ske"
+            },
+            {
+                name: "Chiromo Hospital Group",
+                description: "Specializes in mental health and psychiatric care.",
+                location: "Westlands, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8394231431676!2d36.80729637395587!3d-1.2692246356055923!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f173be9c30923%3A0xbebde22b2d795c02!2sChiromo%20Hospital%20Group%20-%20Westlands!5e0!3m2!1sen!2ske!4v1750660092790!5m2!1sen!2ske"
+            },
+            {
+                name: "Nairobi West Hospital",
+                description: "A Level 6B tertiary referral hospital with advanced critical care units.",
+                location: "South C, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.780930693816!2d36.82330607395608!3d-1.3065963356465264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f110202aa2471%3A0xde8a3885047f8473!2sTHE%20NAIROBI%20WEST%20HOSPITAL!5e0!3m2!1sen!2ske!4v1750670823258!5m2!1sen!2ske"
+            },
+            {
+                name: "Mater Misericordiae Hospital",
+                description: "Offers general and specialist services, including cardiac care.",
+                location: "South B, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.779750262229!2d36.832132373956014!3d-1.3073395356473607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f110672636205%3A0x2ac539980caeee16!2sMater%20Misericordiae%20Hospital!5e0!3m2!1sen!2ske!4v1750660484705!5m2!1sen!2ske"
+            },
+            {
+                name: "Coptic Hospital",
+                description: "Known for affordable services and infectious disease care.",
+                location: "Ngong Road, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7951275783603!2d36.79503477395601!3d-1.2976245356364998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1130ecf559b1%3A0xded383b3b3820aa1!2sCoptic%20Hospital-Main%20Hospital!5e0!3m2!1sen!2ske!4v1750660534754!5m2!1sen!2ske"
+            },
+            {
+                name: "Karen Hospital",
+                description: "A multi-specialty hospital with a focus on cardiac and surgical services.",
+                location: "Karen, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63819.736969109144!2d36.6540630216797!3d-1.3360960999999991!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b0cd88f460f%3A0xded9a184b2600c1f!2sThe%20Karen%20Hospital%20(Emergency%20Unit)!5e0!3m2!1sen!2ske!4v1750660695619!5m2!1sen!2ske"
+            },
+            {
+                name: "Nairobi Women's Hospital",
+                description: "Specializes in women's health, maternity, and general care.",
+                location: "Hurlingham & branches, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63820.82036181376!2d36.7239774216797!3d-1.2937219999999934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10bdadb89515%3A0x5653fe45e4a1ea56!2sThe%20Nairobi%20Women's%20Hospital%20-%20Hurlingham!5e0!3m2!1sen!2ske!4v1750660735952!5m2!1sen!2ske"
+            },
+            {
+                name: "Kenyatta National Hospital",
+                description: "Kenya's largest public referral and teaching hospital.",
+                location: "Upper Hill, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d15955.152112965861!2d36.802848131104874!3d-1.3021187766569622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sKenyatta%20National%20Hospital%20upperhill!5e0!3m2!1sen!2ske!4v1750660841398!5m2!1sen!2ske"
+            },
+            {
+                name: "Mbagathi Hospital",
+                description: "Public hospital offering general and infectious disease care.",
+                location: "Ngumo, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3988.7782070025146!2d36.80076252395609!3d-1.3083105356484648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sMbagathi%20Hospital!5e0!3m2!1sen!2ske!4v1750660905742!5m2!1sen!2ske"
+            },
+            {
+                name: "Pumwani Maternity Hospital",
+                description: "One of the largest maternity hospitals in East Africa.",
+                location: "Eastleigh, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8217070426!2d36.84290237395584!3d-1.280658835617874!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f11359c5b5827%3A0x9e9f31dac2ac8b7a!2sPumwani%20Maternity%20Hospital!5e0!3m2!1sen!2ske!4v1750660957633!5m2!1sen!2ske"
+            },
+            {
+                name: "Mama Lucy Kibaki Hospital",
+                description: "Public hospital serving Nairobi's Eastlands region.",
+                location: "Umoja, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8320379037427!2d36.89641567395579!3d-1.2740036356107005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1470b9264eaf%3A0xa15a0e53078b47b8!2sMama%20Lucy%20Kibaki%20Hospital!5e0!3m2!1sen!2ske!4v1750660998948!5m2!1sen!2ske"
+            },
+            {
+                name: "Avenue Healthcare Hospital",
+                description: "Private hospital network with outpatient and inpatient services.",
+                location: "Buruburu & other locations, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d15955.326203440569!2d36.80770027848732!3d-1.274318272442179!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sAvenue%20Hospital%20Nairobi!5e0!3m2!1sen!2ske!4v1750661130144!5m2!1sen!2ske"
+            },
+            {
+                name: "Radiant Group of Hospitals",
+                description: "Offers affordable general and specialist care.",
+                location: "Pangani & other branches, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.839477899344!2d36.8378371739557!3d-1.2691891356055536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b35ec88a1f3%3A0x749b81dab97ea451!2sRadiant%20Group%20of%20Hospitals%20-%20Pangani%20Branch!5e0!3m2!1sen!2ske!4v1750661179196!5m2!1sen!2ske"
+            },
+            {
+                name: "Mediheal Group of Hospitals",
+                description: "Known for fertility, orthopedic, and surgical services.",
+                location: "Upper Hill, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7867018139277!2d36.80832297395611!3d-1.3029567356424514!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10ee289d3d7f%3A0x387b028871cab33d!2sMediheal%20Group%20of%20Hospitals%20upper%20hill!5e0!3m2!1sen!2ske!4v1750661808309!5m2!1sen!2ske"
+            },
+            {
+                name: "Kenyatta University Teaching, Referral & Research Hospital",
+                description: "A modern public facility with advanced diagnostics.",
+                location: "Kahawa West, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.9755677752637!2d36.91285807395526!3d-1.177656835514929!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f3f1c88779f1b%3A0x4c67bf7d18f21a8a!2sKenyatta%20University%20Teaching%2C%20Referral%20and%20Research%20Hospital.!5e0!3m2!1sen!2ske!4v1750661917651!5m2!1sen!2ske"
+            },
+            {
+                name: "Westlands Health Centre",
+                description: "Public health center offering outpatient services.",
+                location: "Westlands, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3988.8498520998046!2d36.79911757395578!3d-1.2624452355984104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Westlands%20Health%20Centre%20%E2%80%93%20Westlands!5e0!3m2!1sen!2ske!4v1750663222102!5m2!1sen!2ske"
+            },
+            {
+                name: "Lifecare Hospitals Kenya",
+                description: "Offers essential services with a focus on affordability.",
+                location: "Laiboni Centre, Nairobi",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8766481815737!2d36.659386273955555!3d-1.2448570355801238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10bac6ccd7df%3A0x93125eb079c73479!2sLifeCare%20Multispeciality%20Hospitals%3A%20Best%20Hospital%20in%20Kikuyu%2C%20Kenya%20%7C%20Maternity%2C%20Radiology%2C%20Orthopedic%2C%20Diagnostic%20Centre!5e0!3m2!1sen!2ske!4v1750663442605!5m2!1sen!2ske"
+            }
+        ];
+
+        // Function to create hospital cards
+        function createHospitalCards() {
+            const container = document.getElementById('hospitals-container');
+            
+            hospitals.forEach(hospital => {
+                // Create column div
+                const col = document.createElement('div');
+                col.className = 'col';
+                
+                // Create card div
+                const card = document.createElement('div');
+                card.className = 'hospital-card hospital-card-light';
+                
+                // Create card body
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                cardBody.innerHTML = `
+                    <i class="hospital-icon">🏥</i>
+                    <div class="card-title-container">
+                        <h3 class="card-title">${hospital.name}</h3>
+                        <div class="card-category">Hospital</div>
+                    </div>
+                    <div class="card-description">${hospital.description}</div>
+                    <p class="card-text"><i>📍</i> ${hospital.location}</p>
+                `;
+                
+                // Create map link container at the bottom of the card
+                const cardFooter = document.createElement('div');
+                cardFooter.className = 'card-footer';
+                cardFooter.style.marginTop = 'auto';
+                cardFooter.style.paddingTop = '12px';
+                cardFooter.style.borderTop = '1px solid #f0f0f0';
+                cardFooter.innerHTML = `
+                    <a href="#" class="map-icon" onclick="event.preventDefault(); openMap('${hospital.name.replace(/'/g, "\\'")}', '${hospital.map}')">
+                        <i class="fas fa-map"></i> View on Map
+                    </a>
+                `;
+                
+                // Append elements to card body
+                cardBody.appendChild(cardFooter);
+                
+                // Append card body to card
+                card.appendChild(cardBody);
+                
+                // Append elements
+                col.appendChild(card);
+                container.appendChild(col);
+            });
+        }
+
+        // Function to open map in modal
+        function openMap(title, mapUrl) {
+            const modal = document.getElementById('mapModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMap = document.getElementById('modalMap');
+            
+            modalTitle.textContent = title;
+            modalMap.src = mapUrl;
+            modal.style.display = 'block';
+            
+            // Close modal when clicking the close button
+            document.querySelector('.close').onclick = function() {
+                modal.style.display = 'none';
+                modalMap.src = ''; // Reset the iframe src
+            }
+            
+            // Close modal when clicking outside the modal content
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                    modalMap.src = ''; // Reset the iframe src
+                }
+            }
+        }
+        
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createHospitalCards();
+        });
+    </script>
+    
+    <!-- Map Modal -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div class="map-container">
+                <iframe id="modalMap" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

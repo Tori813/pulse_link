@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nairobi Diagnostic Centers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body { transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f0f2f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header { transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: center;
+            margin: 0 auto 40px;
+            padding: 30px 20px;
+            background: #f44336;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        .col {
+            flex: 1 0 100%;
+            padding: 10px;
+        }
+        @media (min-width: 600px) {
+            .col {
+                flex: 0 0 50%;
+            }
+        }
+        @media (min-width: 900px) {
+            .col {
+                flex: 0 0 50%;
+            }
+        }
+        @media (min-width: 1200px) {
+            .col {
+                flex: 0 0 50%;
+            }
+        }
+        .center-card {
+            background: white;
+            border-radius: 0 10px 10px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 5px solid #f44336;
+            margin-left: -5px;
+        }
+        .center-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-body { transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .center-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #f44336;
+            font-style: normal;
+        }
+        .card-title {
+            color: #f44336;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            padding: 5px 10px;
+            background-color: #ffebee;
+            display: inline-block;
+            border-radius: 4px;
+            margin-left: -10px;
+        }
+        .card-description {
+            color: #5f6368;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+        .card-text {
+            color: #5f6368;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .card-text i {
+            margin-right: 8px;
+            color: #e53935;
+            font-style: normal;
+            flex-shrink: 0;
+        }
+        .card-category {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #ffebee;
+            color: #f44336;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #d32f2f;
+        }
+        
+        /* Map Modal Styles */
+        .map-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .map-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .map-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .map-modal.active .map-modal-content {
+            transform: translateY(0);
+        }
+        
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .close-map {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            transition: color 0.3s ease;
+        }
+        
+        .close-map:hover {
+            color: #ff5252;
+        }
+        
+        .card-footer {
+            margin-top: auto;
+            padding: 15px 0 5px 0;
+            border-top: 1px solid #f0f0f0;
+            text-align: left;
+        }
+        
+        .view-map {
+            color: #f44336;
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: rgba(244, 67, 54, 0.05);
+            border: 1px solid rgba(244, 67, 54, 0.2);
+            transition: all 0.2s ease;
+            margin-bottom: 5px;
+        }
+        
+        .view-map i {
+            margin-right: 6px;
+        }
+        
+        .view-map:hover {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #d32f2f;
+            text-decoration: none;
+        }
+    </style>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nairobi Diagnostic Centers</h1>
+            <p class="lead">Advanced medical imaging and diagnostic facilities</p>
+        </div>
+        
+        <div class="row" id="centers-container">
+            <!-- Diagnostic center cards will be dynamically inserted here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="facility-types.html" class="back-button">← Back to Facility Types</a>
+        </div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="mapModal" class="map-modal">
+        <div class="map-modal-content">
+            <span class="close-map" onclick="closeMap()">&times;</span>
+            <div class="map-container">
+                <iframe id="mapFrame" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to open map modal
+        function openMap(centerName, mapUrl) {
+            event.preventDefault();
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            // Set the iframe source
+            mapFrame.src = mapUrl;
+            
+            // Show the modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+            
+            // Close modal when clicking outside the content
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeMap();
+                }
+            };
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeMap();
+                }
+            });
+        }
+        
+        // Function to close map modal
+        function closeMap() {
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            // Hide the modal
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            
+            // Remove the iframe source to stop loading and free resources
+            setTimeout(() => {
+                mapFrame.src = '';
+            }, 300);
+        }
+        // Diagnostic centers data
+        const diagnosticCenters = [
+            {
+                name: "Meditest Diagnostic Hospital",
+                description: "Offers radiology, urology, oncology, and psychiatric diagnostics.",
+                location: "Parklands Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.798590637!2d36.803462573956025!3d-1.2954267356340554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10c02a83fd39%3A0xa839b1656fc6fe6d!2sMeditest%20Diagnostic%20Services%20Ltd.%20Upper%20Hill%20Branch!5e0!3m2!1sen!2ske!4v1750672249784!5m2!1sen!2ske"
+            },
+            {
+                name: "Metropolis KK Shah Laboratories",
+                description: "NABL & CAP accredited, with a wide test menu.",
+                location: "Empress Tower Suites, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8565878111963!2d36.80368037395563!3d-1.2580472355937844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1715590d5607%3A0xbcca869003c06c5c!2sMetropolis%20K%20K%20Shah%20Laboratories%20%7C%20Blood%20Test%20%26%20Diagnostic%20Centre%20in%20Nairobi!5e0!3m2!1sen!2ske!4v1750672289753!5m2!1sen!2ske"
+            },
+            {
+                name: "German Medical Center",
+                description: "Specializes in medical imaging and diagnostics.",
+                location: "KMA Centre, Mara Road, Upper Hill, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7934958819687!2d36.8088180739559!3d-1.2986589356376455!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10e920d825d5%3A0xea8e7af198f29470!2sGerman%20Medical%20Center!5e0!3m2!1sen!2ske!4v1750672338960!5m2!1sen!2ske"
+            },
+            {
+                name: "Mediheal Diagnostics & Fertility Center",
+                description: "Offers fertility, imaging, and pathology services.",
+                location: "3rd Parklands Avenue, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26833.4902040097!2d36.80094173489325!3d-1.2803524217030424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1788dbccd9f1%3A0xb430ab44a9ad7f6b!2sMediheal%20Hospitals%20(Parklands)%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1750672397028!5m2!1sen!2ske"
+            },
+            {
+                name: "Avenue Hospital Radiology & Imaging Centre",
+                description: "Part of Avenue Healthcare's diagnostic network.",
+                location: "First Parklands Avenue, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.846285616309!2d36.81494547395581!3d-1.2647677356008546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f176c7e41893b%3A0xaada2e08d68d3e9!2sAvenue%20Hospital%20Radiology%20Diagnostic%20Imaging%20Centre!5e0!3m2!1sen!2ske!4v1750672430690!5m2!1sen!2ske"
+            },
+            {
+                name: "Quest Laboratories Ltd",
+                description: "Known for advanced pathology and diagnostic testing.",
+                location: "Doctors Park, Parklands, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8521535826353!2d36.81904217395571!3d-1.2609442355968175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f171eece10441%3A0xd63e405a5ee339e7!2sQUEST%20ACE%20LABORATORIES%20LIMITED%2C%20PARKLANDS!5e0!3m2!1sen!2ske!4v1750672476408!5m2!1sen!2ske"
+            },
+            {
+                name: "Dap Diagnostic & Medical Services",
+                description: "Community-based diagnostics and medical services.",
+                location: "Umoja, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.850147259627!2d36.91031147395577!3d-1.2622528355982043!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f15a796a04239%3A0xfd1cdfcb7fea2ad2!2sDap%20Diagnostic%20And%20Medical%20Services!5e0!3m2!1sen!2ske!4v1750672521932!5m2!1sen!2ske"
+            },
+            {
+                name: "Analabs Ltd",
+                description: "Clinical testing and lab supplies.",
+                location: "Coopers Centre, Kaptagat Road",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.852196948723!2d36.74688857395567!3d-1.2609159355967983!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f19f54d16dceb%3A0x4f131a51fd4ac2b0!2sAnalabs%20Ltd!5e0!3m2!1sen!2ske!4v1750677818620!5m2!1sen!2ske"
+            }
+        ];
+
+        // Function to create diagnostic center cards
+        function createCenterCards() {
+            const container = document.getElementById('centers-container');
+            
+            diagnosticCenters.forEach(center => {
+                // Create column div
+                const col = document.createElement('div');
+                col.className = 'col';
+                
+                // Create card div
+                const card = document.createElement('div');
+                card.className = 'center-card';
+                
+                // Create card content
+                card.innerHTML = `
+                    <div class="card-body">
+                        <i class="center-icon">🔍</i>
+                        <h3 class="card-title">${center.name}</h3>
+                        <div class="card-category">Diagnostic Center</div>
+                        <div class="card-description">${center.description}</div>
+                        <p class="card-text"><i class="fas fa-map-marker-alt"></i>${center.location}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="view-map" onclick="openMap('${center.name.replace(/'/g, "\\'")}', '${center.mapUrl}')">
+                            <i class="fas fa-map"></i> View on Map
+                        </a>
+                    </div>
+                    </div>
+                `;
+                
+                // Append elements
+                col.appendChild(card);
+                container.appendChild(col);
+            });
+        }
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createCenterCards();
+        });
+    </script>
+</body>
+</html>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/theme-switcher.js"></script>
+</head        

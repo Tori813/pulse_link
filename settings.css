@@ -1,0 +1,564 @@
+/* Settings Page Styles */
+.section-title {
+    font-size: 15px;
+    color: #555;
+    margin: 20px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    grid-column: 1 / -1;
+}
+
+.setting-group {
+    display: grid;
+    gap: 15px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    border: 1px solid #eee;
+    font-size: 0.95em;
+}
+
+.setting-item:hover {
+    border-color: #ddd;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.setting-info h3 {
+    margin: 0 0 3px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+.setting-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* Tabs */
+.settings-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 1px;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.tab-btn i {
+    font-size: 15px;
+}
+
+.tab-btn:hover {
+    color: #0a2463;
+}
+
+.tab-btn.active {
+    color: #0a2463;
+    border-bottom-color: #0a2463;
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h2 {
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tab-content h2 i {
+    color: #0a2463;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #0a2463;
+    color: #0a2463;
+    min-width: 100px;
+    text-align: center;
+}
+
+.btn-outline:hover {
+    background: #0a2463;
+    color: #fff;
+}
+
+/* Form Elements */
+.form-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.93em;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-left: 15px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #0a2463;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #0a2463;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .settings-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+    
+    .tab-btn {
+        padding: 10px 16px;
+    }
+    
+    .btn-outline, .form-select {
+        width: 100%;
+    }
+}
+
+/* Security Badges */
+.security-level {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.security-level.strong {
+    background: #e3f9ed;
+    color: #0a8f4f;
+}
+
+.security-level.medium {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.security-level.weak {
+    background: #ffebee;
+    color: #d32f2f;
+}
+.settings-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.settings-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: #0a2463;
+}
+
+.tab-btn.active {
+    color: #0a2463;
+    border-bottom-color: #0a2463;
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+}
+
+.setting-info h3 {
+    margin: 0 0 4px 0;
+    color: #333;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.setting-info p {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #0a2463;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #0a2463;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Form Elements */
+.form-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #0a2463;
+    color: #0a2463;
+}
+
+.btn-outline:hover {
+    background: #0a2463;
+    color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .settings-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+    
+    .tab-btn {
+        padding: 10px 16px;
+    }
+}
+
+/* Theme variables */
+:root {
+    /* Dark theme colors */
+    --dark-bg: #0f172a;
+    --darker-bg: #0b1120;
+    --dark-card: #1e293b;
+    --dark-border: #2d3748;
+    --dark-text: #f8fafc;
+    --dark-text-secondary: #94a3b8;
+    
+    /* Light theme colors */
+    --light-bg: #f5f7fa;
+    --light-card: #ffffff;
+    --light-border: #e2e8f0;
+    --light-text: #1e293b;
+    --light-text-secondary: #64748b;
+}
+
+/* Base theme styles */
+.main-content.dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+}
+
+.main-content.light-mode {
+    background-color: var(--light-bg);
+    color: var(--light-text);
+}
+
+/* Settings container */
+.settings-container.dark-mode {
+    background-color: var(--darker-bg);
+    color: var(--dark-text);
+}
+
+.settings-container.light-mode {
+    background-color: var(--light-card);
+    color: var(--light-text);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab content */
+.tab-content.dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+}
+
+/* Setting items */
+.setting-item {
+    transition: background-color 0.2s ease;
+}
+
+.setting-item.dark-mode {
+    background-color: var(--dark-card);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.setting-item.light-mode {
+    background-color: var(--light-card);
+    border-color: var(--light-border);
+}
+
+/* Form elements */
+.dark-mode .form-select,
+.dark-mode input[type="text"],
+.dark-mode input[type="password"],
+.dark-mode input[type="email"] {
+    background-color: var(--dark-card);
+    color: var(--dark-text);
+    border-color: var(--dark-border);
+}
+
+/* Buttons */
+.dark-mode .btn-outline {
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.dark-mode .btn-outline:hover {
+    background-color: var(--dark-card);
+}
+
+/* Tabs */
+.tab-btn.dark-mode {
+    color: var(--dark-text-secondary);
+}
+
+.tab-btn.dark-mode.active {
+    color: var(--dark-text);
+    border-bottom-color: var(--dark-text);
+}
+
+/* Headers and text */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode .section-title {
+    color: var(--dark-text);
+}
+
+.dark-mode p,
+.dark-mode .setting-info p {
+    color: var(--dark-text-secondary);
+}
+
+/* Modal content */
+.modal-content.dark-mode {
+    background-color: var(--dark-card);
+    color: var(--dark-text);
+}
+
+/* Toggle switch */
+.dark-mode .slider {
+    background-color: var(--dark-border);
+}
+
+.dark-mode input:checked + .slider {
+    background-color: #4f46e5;
+}
+
+/* Apply theme to all elements */
+.dark-mode,
+.dark-mode * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

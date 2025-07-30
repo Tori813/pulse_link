@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nairobi Laboratories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body { transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f0f2f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .header { transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: center;
+            margin: 0 auto 40px;
+            padding: 30px 20px;
+            background: #9c27b0;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+            width: calc(100% + 20px);
+        }
+        .col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        @media (min-width: 768px) {
+            .col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        .lab-card {
+            background: white;
+            border-radius: 0 10px 10px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 5px solid #9c27b0;
+            margin-left: -5px;
+        }
+        .lab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-body { transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .lab-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #9c27b0;
+            font-style: normal;
+        }
+        .card-title {
+            color: #9c27b0;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            padding: 5px 10px;
+            background-color: #f3e5f5;
+            display: inline-block;
+            border-radius: 4px;
+            margin-left: -10px;
+        }
+        
+        .card-category {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+        .card-description {
+            color: #5f6368;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+        .card-text {
+            color: #5f6368;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .card-text i {
+            margin-right: 8px;
+            color: #e91e63;
+            font-style: normal;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #9c27b0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #7b1fa2;
+        }
+        
+        /* Map Modal Styles */
+        .map-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .map-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .map-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .map-modal.active .map-modal-content {
+            transform: translateY(0);
+        }
+        
+        .map-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .close-map {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            transition: color 0.3s ease;
+        }
+        
+        .card-footer {
+            margin-top: auto;
+            padding: 15px 0 5px 0;
+            text-align: left;
+        }
+
+        .view-map {
+            display: inline-flex;
+            align-items: center;
+            color: #9c27b0; /* Purple color to match the theme */
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: rgba(156, 39, 176, 0.05);
+            border: 1px solid rgba(156, 39, 176, 0.2);
+            width: fit-content;
+        }
+
+        .view-map:hover {
+            background-color: rgba(156, 39, 176, 0.1);
+            text-decoration: none;
+        }
+
+        .view-map i {
+            margin-right: 6px;
+        }
+    </style>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nairobi Laboratories</h1>
+            <p class="lead">Find diagnostic and testing facilities across Nairobi</p>
+        </div>
+        
+        <div class="row" id="labs-container">
+            <!-- Laboratory cards will be dynamically inserted here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="facility-types.html" class="back-button">← Back to Facility Types</a>
+        </div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="mapModal" class="map-modal">
+        <div class="map-modal-content">
+            <span class="close-map" onclick="closeMap()">&times;</span>
+            <div class="map-container">
+                <iframe id="mapFrame" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to open map modal
+        function openMap(labName, mapUrl) {
+            event.preventDefault();
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            // Set the iframe source
+            mapFrame.src = mapUrl;
+            
+            // Show the modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+            
+            // Close modal when clicking outside the content
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeMap();
+                }
+            };
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeMap();
+                }
+            });
+        }
+        
+        // Function to close map modal
+        function closeMap() {
+            const modal = document.getElementById('mapModal');
+            const mapFrame = document.getElementById('mapFrame');
+            
+            // Hide the modal
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            
+            // Remove the iframe source to stop loading and free resources
+            setTimeout(() => {
+                mapFrame.src = '';
+            }, 300);
+        }
+        // Laboratory data with map URLs
+        const laboratories = [
+            {
+                name: "Quest Laboratories Ltd",
+                description: "Advanced diagnostics near Aga Khan Hospital.",
+                location: "Doctors Park, 3rd Parklands Avenue",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8521535826353!2d36.819042173955694!3d-1.260944235596825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f171eece10441%3A0xd63e405a5ee339e7!2sQUEST%20ACE%20LABORATORIES%20LIMITED%2C%20PARKLANDS!5e0!3m2!1sen!2ske!4v1750670991850!5m2!1sen!2ske"
+            },
+            {
+                name: "Lancet Laboratories Kenya",
+                description: "One of the most trusted labs in East Africa for pathology and clinical testing.",
+                location: "Multiple branches across Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63821.64092406226!2d36.780416898469745!3d-1.2606804554096327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Lancet%20Laboratories%20Kenya%20!5e0!3m2!1sen!2ske!4v1750671160698!5m2!1sen!2ske"
+            },
+            {
+                name: "Meditest Diagnostic Hospital",
+                description: "Offers lab services alongside radiology, pediatrics, and oncology.",
+                location: "Parklands Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d63821.64514681379!2d36.78041681091699!3d-1.2605081783765333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Meditest%20Diagnostic%20Hospital!5e0!3m2!1sen!2ske!4v1750671243094!5m2!1sen!2ske"
+            },
+            {
+                name: "Essence Medical Laboratory",
+                description: "Known for pharmaceutical and diagnostic services.",
+                location: "Komarock Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8445718377284!2d36.904607873955705!3d-1.265882235602045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f154f78923c13%3A0xcee848b7e3b0a0e3!2sEssence%20Medical%20Laboratory!5e0!3m2!1sen!2ske!4v1750678604390!5m2!1sen!2ske"
+            },
+            {
+                name: "Immuno Labs Medical Supplies",
+                description: "Supplies and diagnostics, including immunology tests.",
+                location: "Muthithi Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8436998382513!2d36.79670167395572!3d-1.2664489356026436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f170a9dfdeb0d%3A0x5db018c2f416f7f9!2sImmunolabs%20Medical%20Supplies%20Ltd!5e0!3m2!1sen!2ske!4v1750678673021!5m2!1sen!2ske"
+            },
+            {
+                name: "Nyumbani Diagnostic Laboratory",
+                description: "Specializes in pediatric and community health diagnostics.",
+                location: "Karen, Dagoretti Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4743.474165604707!2d36.697079994960866!3d-1.3131980036406095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b7f6782a313%3A0x966b1f2b89754f8c!2sNyumbani%20Diagnostic%20Lab!5e0!3m2!1sen!2ske!4v1750678739734!5m2!1sen!2ske"
+            },
+            {
+                name: "Biotech Medical Laboratory",
+                description: "Offers a wide range of lab tests.",
+                location: "City Centre, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.81293229981!2d36.824562473955915!3d-1.2862845356240002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f116ebb859e9f%3A0x83907cfbf3ed1010!2sBIOTECH%20MEDICAL%20LABORATORY%20AND%20VCT.!5e0!3m2!1sen!2ske!4v1750678808221!5m2!1sen!2ske"
+            },
+            {
+                name: "Tumaini Medical Labs and Scan Ultrasound",
+                description: "Known for ultrasound and lab services.",
+                location: "Moi Avenue, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8126990601345!2d36.823113473955814!3d-1.2864337356241626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f11281715e7ed%3A0xa19d91b0970f1754!2stumaini%20medical%20labs%20and%20scan%20ultrasound!5e0!3m2!1sen!2ske!4v1750678559535!5m2!1sen!2ske"
+            },
+            {
+                name: "Acacia Medical Centre",
+                description: "Combines pharmacy and lab services.",
+                location: "Nairobi CBD",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d31910.502197211317!2d36.80508868915378!3d-1.2863853828857597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s-%20Acacia%20Medical%20Centre!5e0!3m2!1sen!2ske!4v1750678905377!5m2!1sen!2ske"
+            },
+            {
+                name: "Plaza Imaging Solutions",
+                description: "Specializes in imaging and diagnostic scans.",
+                location: "Ngong Road, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7977389278053!2d36.80486807395595!3d-1.2959676356346572!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10ea4015bed1%3A0xed7b440997682094!2sPlaza%20Imaging%20Solutions!5e0!3m2!1sen!2ske!4v1750678946486!5m2!1sen!2ske"
+            },
+            {
+                name: "DNA Center Kenya",
+                description: "Accredited for DNA and paternity testing.",
+                location: "Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.836285760193!2d36.80766717395572!3d-1.2712570356077593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1737d71eddef%3A0x7066b1b08388ff46!2sDNA%20Bioscience%20Center%20Ltd.!5e0!3m2!1sen!2ske!4v1750678995839!5m2!1sen!2ske"
+            },
+            {
+                name: "University of Nairobi Public Health Labs",
+                description: "Academic and research-based diagnostics.",
+                location: "Chiromo Campus, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.33287322181!2d36.78691215541993!3d-1.273241000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1738049f49e3%3A0xbb1b3bf04c4f84d6!2sUniversity%20Of%20Nairobi%20-%20Chiromo%20Campus!5e0!3m2!1sen!2ske!4v1750679105154!5m2!1sen!2ske"
+            },
+            {
+                name: "JKUAT Environmental Engineering Lab",
+                description: "Specializes in environmental and microbial testing.",
+                location: "Juja, Nairobi",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127651.02471244216!2d36.867493743359375!3d-1.0913809000000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f46276c2d9021%3A0xbefd8e40071d3352!2sJomo%20Kenyatta%20University%20Of%20Agriculture%20And%20Technology!5e0!3m2!1sen!2ske!4v1750679234864!5m2!1sen!2ske"
+            }
+        ];
+
+        // Function to create laboratory cards
+        function createLabCards() {
+            const container = document.getElementById('labs-container');
+            
+            laboratories.forEach(lab => {
+                // Create column div
+                const col = document.createElement('div');
+                col.className = 'col';
+                
+                // Create card div
+                const card = document.createElement('div');
+                card.className = 'lab-card';
+                
+                // Create card content
+                card.innerHTML = `
+                    <div class="card-body">
+                        <i class="lab-icon">🧪</i>
+                        <h3 class="card-title">${lab.name}</h3>
+                        <div class="card-category">Laboratory</div>
+                        <div class="card-description">${lab.description}</div>
+                        <p class="card-text"><i class="fas fa-map-marker-alt"></i>${lab.location}</p>
+                        <a href="#" class="view-map" onclick="openMap('${lab.name.replace(/'/g, "\\'")}', '${lab.mapUrl}')">
+                            <i class="fas fa-map"></i> View on Map
+                        </a>
+                    </div>
+                `;
+                
+                // Append elements
+                col.appendChild(card);
+                container.appendChild(col);
+            });
+        }
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createLabCards();
+        });
+    </script>
+</body>
+</html>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/theme-switcher.js"></script>
+</head        

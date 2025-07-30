@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Link</title>
+    <link href="dashboard.css" rel="stylesheet">
+    <link href="sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="dark-theme.css">
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            // Handle 'system' theme by checking system preference
+            if (theme === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            
+            // Get all elements that need theme classes (excluding sidebar)
+            const elementsToTheme = [
+                document.documentElement, // html element
+                document.body,
+                document.querySelector('.main-content'),
+                ...document.querySelectorAll('.hospital-card'),
+                ...document.querySelectorAll('.custom-column'),
+                document.querySelector('header'),
+                document.querySelector('footer'),
+                document.querySelector('main')
+            ];
+            
+            // Function to apply theme to an element
+            const applyTheme = (element) => {
+                if (element) {
+                    // Remove existing theme classes
+                    element.classList.remove('light-mode', 'dark-mode');
+                    
+                    // Add the new theme class
+                    element.classList.add(theme + '-mode');
+                }
+            };
+            
+            // Apply theme to all elements
+            elementsToTheme.forEach(applyTheme);
+            
+            // Apply theme to body for general theming
+            document.body.className = '';
+            document.body.classList.add(theme + '-mode');
+            
+            // Save the theme preference to localStorage
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get saved theme or default to system
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            
+            // Apply the saved theme
+            switchTheme(savedTheme);
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    switchTheme('system');
+                }
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Pulse Link</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="profile.html">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="symptom-checker.html">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Symptom Checker</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="inbox.html">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="last-visited.html">
+                            <i class="fas fa-history"></i>
+                            <span>Last Visited</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Facilities</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="facility-types.html">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Facility Types</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="locations.html">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Locations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="help-support.html">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help & Support</span>
+                        </a>
+                    </li>
+                    <li class="menu-item logout">
+                        <a href="logout.html">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <h4>Victoria Okello</h4>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="sidebar-overlay"></div>
+
+    <main class="main-content">
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="pulse_blue.png" alt="Pulse Link">
+            <h1 class="logo-text">PULSE LINK</h1>
+        </div>
+    </header>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-text">YOUR DIGITAL HEALTH PARTNER</h1>
+            <p class="tagline">Connecting you to quality healthcare services with just a tap. Fast, reliable, and always there when you need it most.</p>
+            <div class="cta-container">
+                <a href="locations.html" class="cta-button">Get Started <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hospital Cards Section -->
+    <div class="hospital-cards-section">
+        <h2>Featured Hospitals in Nairobi</h2>
+        <div class="row">
+            <div class="custom-column">
+                <div class="hospital-card">
+                    <h4>Aga Khan University Hospital</h4>
+                    <p>Specialties: Cardiology, Orthopedics, Neurology</p>
+                    <p>Located in Parklands, Nairobi</p>
+                    <a href="https://hospitals.aku.edu/Pages/default.aspx" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            <div class="custom-column">
+                <div class="hospital-card">
+                    <h4>Kenya National Hospital</h4>
+                    <p>Specialties: General Medicine, Pediatrics, Surgery</p>
+                    <p>Located in Upper Hill, Nairobi</p>
+                    <a href="https://knh.or.ke/" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            <div class="custom-column">
+                <div class="hospital-card">
+                    <h4>MP Shah Hospital</h4>
+                    <p>Specialties: Maternity, Emergency, Radiology</p>
+                    <p>Located in Parklands, Nairobi</p>
+                    <a href="https://mpshahhosp.org/" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <select id="facilityType">
+            <option value="">Select Facility Type</option>
+            <option value="hospital">Hospital</option>
+            <option value="clinic">Clinic</option>
+            <option value="pharmacy">Pharmacy</option>
+        </select>
+    
+        <select id="location">
+            <option value="">Select Location</option>
+            <option value="nairobi">Nairobi</option>
+            <option value="mombasa">Mombasa</option>
+            <option value="kisumu">Kisumu</option>
+        </select>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="cta-section">
+        <div class="cta-content">
+            <h2>Your Health, Your Convenience</h2>
+            <p>No more searching, no more delays—just fast, reliable access to medical care when you need it most. Whether it's an emergency or a routine checkup, PULSE LINK is here to guide you every step of the way.</p>
+            <p>Our mission is to empower you with the information you need to take control of your health.</p>
+            <p>Take control of your health today!</p>
+        </div>
+    </div>  
+
+    <!-- Footer -->  
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Pulse Link. All rights reserved.</p>
+        </div>
+    </footer>
+    </div>
+</footer>
+
+</main>
+<script src="sidebar.js" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'system';
+        switchTheme(savedTheme);
+    });
+</script>
+<script>
+    document.getElementById('get-started-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const introSection = document.getElementById('intro');
+        const headerOffset = 80; // Adjust this value based on your header height
+        const elementPosition = introSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+
+        // Add a class to trigger the animation
+        introSection.classList.add('slide-in');
+    });
+</script>
+<script src="dashboard.js"></script>
+    <!-- Elfsight AI Chatbot -->
+    <script src="https://static.elfsight.com/platform/platform.js" async></script>
+    <div class="elfsight-app-8c5456a7-f7f9-44c9-a143-96c053c90f68" data-elfsight-app-lazy></div>
+</body>
+</html>
