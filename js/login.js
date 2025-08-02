@@ -36,10 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Login response:', data);
 
                 if (response.ok) {
-                    // Store the token in localStorage
+                    // Store authentication data in localStorage
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user_id', data.userId);
-                    localStorage.setItem('role', data.role);
+                    
+                    // Store complete user data
+                    const userData = {
+                        userId: data.user.user_id,
+                        email: data.user.email,
+                        firstName: data.user.first_name,
+                        lastName: data.user.last_name,
+                        role: data.user.role
+                    };
+                    
+                    localStorage.setItem('userData', JSON.stringify(userData));
 
                     // Remember me functionality
                     if (rememberMe.checked) {

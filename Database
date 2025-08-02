@@ -40,6 +40,18 @@ CREATE TABLE user_logins (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE user_sessions (
+    session_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    device_info VARCHAR(100),
+    ip_address VARCHAR(45),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 CREATE TABLE roles (
     role_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -92,18 +104,6 @@ CREATE TABLE message_threads (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (other_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (last_message_id) REFERENCES messages(message_id) ON DELETE SET NULL
-);
-
-CREATE TABLE user_sessions (
-    session_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    session_token VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL,
-    device_info VARCHAR(100),
-    ip_address VARCHAR(45),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE user_preferences (

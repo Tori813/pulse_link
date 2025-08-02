@@ -216,6 +216,223 @@
             background-color: #fde8e8 !important;
         }
 
+        /* Login Logs Styles */
+        .logs-container {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .logs-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+            gap: 15px;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .log-entry {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+            gap: 15px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .log-entry:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .log-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-indicator.success {
+            background-color: #10b981;
+        }
+
+        .status-indicator.failed {
+            background-color: #ef4444;
+        }
+
+        .log-date {
+            color: var(--text-color);
+        }
+
+        .log-ip {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .no-logs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .no-logs i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .no-logs p {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        /* Scrollbar styling */
+        .logs-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .logs-container::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+            border-radius: 0 0 8px 0;
+        }
+
+        .logs-container::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+            border-radius: 3px;
+        }
+        .logs-header, .log-entry {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            padding: 12px 15px;
+            align-items: center;
+        }
+
+        .logs-header {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+            margin: 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+
+        .log-entry:hover {
+            background-color: #f8f9fa;
+        }
+
+        .log-status {
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            text-align: center;
+        }
+
+        .log-status.success {
+            background-color: #e6f7ee;
+            color: #0d6832;
+        }
+
+        .log-status.failed {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .log-date {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .log-ip {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .loading-text, .error-text {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .retry-button {
+            display: block;
+            margin: 10px auto;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .retry-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .loading-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #007bff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 2rem;
+            color: #dc3545;
+        }
+
+        .error-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
         .session-device i, .session-location i {
             margin-right: 5px;
             color: #777;
@@ -360,15 +577,7 @@
                                     <h3>Change Password</h3>
                                     <p>Update your current password to a new one</p>
                                 </div>
-                                <button class="btn btn-outline" id="changePasswordBtn">Change</button>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-info">
-                                    <h3>Email Address</h3>
-                                    <p>victoria@gmail.com</p>
-                                </div>
-                                <button class="btn btn-outline" id="changeEmailBtn">Change</button>
+                                <button class="btn btn-outline" id="changePasswordSecurityBtn">Change Password</button>
                             </div>
                             
                             <div class="setting-item">
@@ -377,7 +586,7 @@
                                     <p>Add an extra layer of security to your account</p>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox" checked>
+                                    <input type="checkbox" id="twoFactorAuth" name="twoFactorAuth" checked>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -388,25 +597,6 @@
                     <div id="security" class="tab-content">
                         <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
                         <div class="setting-group">
-                            <div class="setting-item">
-                                <div class="setting-info">
-                                    <h3>Change Password</h3>
-                                    <p>Last changed 3 months ago</p>
-                                </div>
-                                <button class="btn btn-outline" id="changePasswordSecurityBtn">Change</button>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-info">
-                                    <h3>Two-Factor Authentication</h3>
-                                    <p>Add an extra layer of security to your account</p>
-                                </div>
-                                <label class="switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-
                             <div class="setting-item">
                                 <div class="setting-info">
                                     <h3>Login History</h3>
@@ -444,7 +634,7 @@
                                     <p>Get notified when you receive new messages</p>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox" checked>
+                                    <input type="checkbox" id="emailNotifications" name="emailNotifications" checked>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -455,7 +645,7 @@
                                     <p>Get alerts for important activities</p>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox" checked>
+                                    <input type="checkbox" id="activityAlerts" name="activityAlerts" checked>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -467,7 +657,7 @@
                                     <p>Receive push notifications for new updates</p>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox" checked>
+                                    <input type="checkbox" id="pushNotifications" name="pushNotifications" checked>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -478,7 +668,7 @@
                                     <p>Get reminders for important events</p>
                                 </div>
                                 <label class="switch">
-                                    <input type="checkbox">
+                                    <input type="checkbox" id="reminders" name="reminders">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -521,8 +711,18 @@
     </div>
 
     <script>
+        // Modal Elements - Declare at the top for global access
+        let logsModal, closeLogsModalBtn, logsContent, sessionsModal, closeSessionsModalBtn, sessionsContent;
+        
         // Tab switching functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize modal elements
+            logsModal = document.getElementById('logsModal');
+            closeLogsModalBtn = document.getElementById('closeLogsModal');
+            logsContent = document.getElementById('logsContent');
+            sessionsModal = document.getElementById('sessionsModal');
+            closeSessionsModalBtn = document.getElementById('closeSessionsModal');
+            sessionsContent = document.getElementById('sessionsContent');
             // Sidebar toggle functionality
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.querySelector('.sidebar');
@@ -783,70 +983,38 @@
         </div>
     </div>
 
-    <!-- Change Password Modal -->
-    <div class="modal-overlay" id="passwordModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closePasswordModal">&times;</button>
-            <h2>Change Password</h2>
-            <p>Enter your current and new password below</p>
-            
-            <div class="form-group">
-                <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" placeholder="Enter current password">
-                <div class="error-message" id="currentPasswordError"></div>
-            </div>
-            
-            <div class="form-group">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPasswordSettings" placeholder="Enter new password">
-                <div class="error-message" id="newPasswordError"></div>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirmNewPassword">Confirm New Password</label>
-                <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
-                <div class="error-message" id="confirmPasswordError"></div>
-            </div>
-            
-            <div class="modal-buttons">
-                <button class="btn btn-outline" id="cancelPasswordChange">Cancel</button>
-                <button class="btn btn-primary" id="savePassword">Save Changes</button>
-            </div>
-        </div>
+<!-- Change Password Modal -->
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closePasswordModal">&times;</button>
+      <h2>Change Password</h2>
+      <p>Enter your current and new password below</p>
+  
+      <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password" autocomplete="current-password" aria-describedby="currentPasswordError">
+        <div class="error-message" id="currentPasswordError"></div>
+      </div>
+  
+      <div class="form-group">
+        <label for="newPasswordSettings">New Password</label>
+        <input type="password" id="newPasswordSettings" name="newPassword" placeholder="Enter new password" autocomplete="new-password" aria-describedby="newPasswordError">
+        <div class="error-message" id="newPasswordError"></div>
+      </div>
+  
+      <div class="form-group">
+        <label for="confirmNewPassword">Confirm New Password</label>
+        <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm new password" autocomplete="new-password" aria-describedby="confirmPasswordError">
+        <div class="error-message" id="confirmPasswordError"></div>
+      </div>
+  
+      <div class="modal-buttons">
+        <button class="btn btn-outline" id="cancelPasswordChange">Cancel</button>
+        <button class="btn btn-primary" id="savePassword">Save Changes</button>
+      </div>
     </div>
-
-    <!-- Change Email Modal -->
-    <div class="modal-overlay" id="emailModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeEmailModal">&times;</button>
-            <h2>Change Email Address</h2>
-            <p>Enter your new email address below</p>
-            
-            <div class="form-group">
-                <label for="currentPasswordForEmail">Current Password</label>
-                <input type="password" id="currentPasswordForEmail" placeholder="Enter your password">
-                <div class="error-message" id="emailPasswordError"></div>
-            </div>
-            
-            <div class="form-group">
-                <label for="newEmail">New Email Address</label>
-                <input type="email" id="newEmail" placeholder="Enter new email address">
-                <div class="error-message" id="newEmailError"></div>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirmNewEmail">Confirm New Email</label>
-                <input type="email" id="confirmNewEmail" placeholder="Confirm new email address">
-                <div class="error-message" id="confirmEmailError"></div>
-            </div>
-            
-            <div class="modal-buttons">
-                <button class="btn btn-outline" id="cancelEmailChange">Cancel</button>
-                <button class="btn btn-primary" id="saveEmail">Save Changes</button>
-            </div>
-        </div>
-    </div>
-    
+  </div>
+  
 
     <script>
         // Password Change Modal
@@ -857,24 +1025,13 @@
         const cancelPasswordChange = document.getElementById('cancelPasswordChange');
         const savePasswordBtn = document.getElementById('savePassword');
 
-        // Email Change Modal
-        const emailModal = document.getElementById('emailModal');
-        const changeEmailBtn = document.getElementById('changeEmailBtn');
-        const closeEmailModal = document.getElementById('closeEmailModal');
-        const cancelEmailChange = document.getElementById('cancelEmailChange');
-        const saveEmailBtn = document.getElementById('saveEmail');
-
-        // Open Password Modal from Account Settings
-        changePasswordBtn.addEventListener('click', () => {
-            passwordModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        });
-
         // Open Password Modal from Security Settings
-        changePasswordSecurityBtn.addEventListener('click', () => {
-            passwordModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        });
+        if (changePasswordSecurityBtn) {
+            changePasswordSecurityBtn.addEventListener('click', () => {
+                passwordModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        }
 
         // Close Password Modal
         function closePasswordModalFunc() {
@@ -890,33 +1047,10 @@
         closePasswordModal.addEventListener('click', closePasswordModalFunc);
         cancelPasswordChange.addEventListener('click', closePasswordModalFunc);
 
-        // Open Email Modal
-        changeEmailBtn.addEventListener('click', () => {
-            emailModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        });
-
-        // Close Email Modal
-        function closeEmailModalFunc() {
-            emailModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            // Clear form and errors
-            document.getElementById('currentPasswordForEmail').value = '';
-            document.getElementById('newEmail').value = '';
-            document.getElementById('confirmNewEmail').value = '';
-            document.querySelectorAll('#emailModal .error-message').forEach(el => el.style.display = 'none');
-        }
-
-        closeEmailModal.addEventListener('click', closeEmailModalFunc);
-        cancelEmailChange.addEventListener('click', closeEmailModalFunc);
-
         // Close modals when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target === passwordModal) {
                 closePasswordModalFunc();
-            }
-            if (event.target === emailModal) {
-                closeEmailModalFunc();
             }
             if (event.target === logsModal) {
                 closeLogsModal();
@@ -926,37 +1060,120 @@
             }
         });
 
-        // Logs Modal Functionality
-        const logsModal = document.getElementById('logsModal');
-        const closeLogsModalBtn = document.getElementById('closeLogsModal');
-        const logsContent = document.getElementById('logsContent');
-
-        // Sample logs data - in a real app, this would come from your backend
-        const sampleLogs = [
-            { id: 1, date: '2025-06-09 10:30:45', status: 'User logged in', ip: '192.168.1.1' },
-            { id: 2, date: '2025-06-09 10:35:22', status: 'Password changed', ip: '192.168.1.1' },
-            { id: 3, date: '2025-06-08 15:12:33', status: 'Profile updated', ip: '192.168.1.1' },
-            { id: 4, date: '2025-06-07 09:45:18', status: 'User logged in', ip: '192.168.1.1' },
-            { id: 5, date: '2025-06-06 14:22:07', status: 'Email notification settings updated', ip: '192.168.1.1' }
-        ];
-
-        function openLogsModal() {
+        // Open Logs Modal
+        async function openLogsModal() {
             logsModal.style.display = 'flex';
-            // Populate logs
-            logsContent.innerHTML = `
-                <div class="logs-header">
-                    <span>Date & Time</span>
-                    <span>Status</span>
-                    <span>IP Address</span>
-                </div>
-                ${sampleLogs.map(log => `
-                    <div class="log-entry">
-                        <span class="log-date">${log.date}</span>
-                        <span class="log-status">${log.status}</span>
-                        <span class="log-ip">${log.ip}</span>
+            logsContent.innerHTML = '<p class="loading-text">Loading login history...</p>';
+
+            try {
+                // Check if user is logged in
+                const token = localStorage.getItem('token');
+                const userDataStr = localStorage.getItem('userData');
+                let userData = {};
+                
+                try {
+                    userData = userDataStr ? JSON.parse(userDataStr) : {};
+                } catch (e) {
+                    console.error('Error parsing userData:', e);
+                }
+                
+                console.log('Auth check:', { 
+                    hasToken: !!token, 
+                    tokenLength: token ? token.length : 0,
+                    userDataExists: !!userDataStr,
+                    userData: userData,
+                    localStorageKeys: Object.keys(localStorage)
+                });
+                
+                if (!token || !userData || !userData.userId) {
+                    console.error('Authentication failed:', {
+                        missingToken: !token,
+                        missingUserData: !userData,
+                        missingUserId: !(userData && userData.userId)
+                    });
+                    
+                    logsContent.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Authentication Required</h3>
+                            <p>Please log in to view your login history.</p>
+                            <div style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: left; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                                <p><strong>Debug Info:</strong></p>
+                                <p>Token: ${token ? 'Exists' : 'Missing'}</p>
+                                <p>User Data: ${userDataStr ? 'Exists' : 'Missing'}</p>
+                                <p>User ID: ${userData && userData.userId ? userData.userId : 'Missing'}</p>
+                            </div>
+                            <button onclick="window.location.href='login.html'" class="btn btn-primary" style="margin-top: 20px;">
+                                <i class="fas fa-sign-in-alt"></i> Go to Login
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Show loading state
+                logsContent.innerHTML = `
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading your login history...</p>
                     </div>
-                `).join('')}
-            `;
+                `;
+
+                const response = await fetch('/api/logs', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch logs');
+                }
+
+                const data = await response.json();
+                
+                if (!data.logs || data.logs.length === 0) {
+                    logsContent.innerHTML = `
+                        <div class="no-logs">
+                            <i class="fas fa-history"></i>
+                            <p>No login history found.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                logsContent.innerHTML = `
+                    <div class="logs-header">
+                        <span>Date & Time</span>
+                        <span>Status</span>
+                        <span>Device</span>
+                        <span>IP Address</span>
+                    </div>
+                    <div class="logs-container">
+                        ${data.logs.map(log => `
+                            <div class="log-entry">
+                                <span class="log-date">${new Date(log.login_time).toLocaleString()}</span>
+                                <span class="log-status ${log.status.toLowerCase()}">
+                                    <span class="status-indicator ${log.status.toLowerCase() === 'success' ? 'success' : 'failed'}"></span>
+                                    ${log.status}
+                                </span>
+                                <span class="log-device">${log.device_type || 'Unknown'}</span>
+                                <span class="log-ip">${log.ip_address || 'N/A'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading login logs:', error);
+                logsContent.innerHTML = `
+                    <p class="error-text">Failed to load login history. Please try again later.</p>
+                    <button onclick="openLogsModal()" class="retry-button">
+                        <i class="fas fa-sync-alt"></i> Retry
+                    </button>
+                `;
+            }
         }
 
         function closeLogsModal() {
@@ -964,9 +1181,6 @@
         }
 
         // Active Sessions Modal Functionality
-        const sessionsModal = document.getElementById('sessionsModal');
-        const closeSessionsModalBtn = document.getElementById('closeSessionsModal');
-        const sessionsContent = document.getElementById('sessionsContent');
 
         // Sample sessions data - in a real app, this would come from your backend
         const sampleSessions = [
@@ -1087,59 +1301,39 @@
 
 
             if (isValid) {
-                // Here you would typically make an API call to update the password
-                console.log('Password changed successfully');
-                alert('Your password has been updated successfully!');
-                closePasswordModalFunc();
+                const token = localStorage.getItem('token');
+
+                fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message === 'Password changed successfully') {
+                        alert('Your password has been updated successfully!');
+                        closePasswordModalFunc();
+                    } else {
+                        document.getElementById('currentPasswordError').textContent = data.message || 'Password update failed';
+                        document.getElementById('currentPasswordError').style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error('Error updating password:', err);
+                    document.getElementById('currentPasswordError').textContent = 'An error occurred. Please try again.';
+                    document.getElementById('currentPasswordError').style.display = 'block';
+                });
             }
         });
 
         // Email Change Validation
-        saveEmailBtn.addEventListener('click', () => {
-            let isValid = true;
-            const currentPassword = document.getElementById('currentPasswordForEmail').value;
-            const newEmail = document.getElementById('newEmail').value;
-            const confirmNewEmail = document.getElementById('confirmNewEmail').value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            // Reset errors
-            document.querySelectorAll('#emailModal .error-message').forEach(el => el.style.display = 'none');
-
-            // Validate current password
-            if (!currentPassword) {
-                document.getElementById('emailPasswordError').textContent = 'Current password is required';
-                document.getElementById('emailPasswordError').style.display = 'block';
-                isValid = false;
-            }
-
-
-            // Validate new email
-            if (!newEmail) {
-                document.getElementById('newEmailError').textContent = 'New email is required';
-                document.getElementById('newEmailError').style.display = 'block';
-                isValid = false;
-            } else if (!emailRegex.test(newEmail)) {
-                document.getElementById('newEmailError').textContent = 'Please enter a valid email address';
-                document.getElementById('newEmailError').style.display = 'block';
-                isValid = false;
-            }
-
-
-            // Validate confirm email
-            if (newEmail !== confirmNewEmail) {
-                document.getElementById('confirmEmailError').textContent = 'Email addresses do not match';
-                document.getElementById('confirmEmailError').style.display = 'block';
-                isValid = false;
-            }
-
-
-            if (isValid) {
-                // Here you would typically make an API call to update the email
-                console.log('Email changed successfully');
-                alert('Your email address has been updated successfully!');
-                closeEmailModalFunc();
-            }
-        });
     </script>
     <script src="sidebar.js"></script>
 </body>

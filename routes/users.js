@@ -3,6 +3,7 @@ const router = express.Router();
 const { promisePool } = require('../config/db');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
@@ -343,6 +344,143 @@ router.put('/profile/update', verifyToken, async (req, res) => {
         });
     } finally {
         connection.release();
+    }
+});
+
+// Get user login logs
+router.get('/logs', verifyToken, async (req, res) => {
+    try {
+        const [logs] = await promisePool.query(
+            `SELECT 
+                created_at as login_time, 
+                status, 
+                ip_address,
+                device_type
+             FROM user_logins 
+             WHERE user_id = ? 
+             ORDER BY created_at DESC`,
+            [req.userId]
+        );
+
+        res.json({ logs });
+    } catch (error) {
+        console.error('Failed to load logs:', error);
+        res.status(500).json({ message: 'Failed to load user logs' });
+    }
+});
+// Change password route
+router.post('/change-password', verifyToken, async (req, res) => {
+    const userId = req.userId;
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        // Get the current hashed password from the database
+        const [rows] = await promisePool.query(
+            'SELECT password FROM users WHERE user_id = ?', 
+            [userId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const user = rows[0];
+
+        // Compare the current password with the stored hash
+        const isMatch = await User.comparePassword(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+
+        // Hash the new password
+        const hashedNewPassword = await User.hashPassword(newPassword);
+
+        // Update the password in the database
+        await promisePool.query(
+            'UPDATE users SET password = ?, updated_at = NOW() WHERE user_id = ?',
+            [hashedNewPassword, userId]
+        );
+
+        res.json({ message: 'Password changed successfully' });
+
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get user login logs
+router.get('/logs', verifyToken, async (req, res) => {
+    let connection;
+    try {
+        console.log('Fetching logs for user ID:', req.userId);
+        
+        // Get a new connection from the pool
+        connection = await promisePool.getConnection();
+        
+        // First, verify the user exists
+        const [user] = await connection.query(
+            'SELECT user_id FROM users WHERE user_id = ?',
+            [req.userId]
+        );
+
+        if (user.length === 0) {
+            console.error('User not found:', req.userId);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('User verified, querying logs...');
+        
+        // Debug: Show the actual query being executed
+        const query = `
+            SELECT 
+                login_time,
+                status, 
+                ip_address,
+                device_type,
+                browser_info,
+                location
+             FROM user_logins 
+             WHERE user_id = ? 
+             ORDER BY login_time DESC`;
+        console.log('Executing query:', query.replace(/\s+/g, ' ').trim());
+        
+        // Then fetch the logs with the connection
+        const [logs] = await connection.query(query, [req.userId]);
+
+        console.log('Successfully fetched', logs.length, 'log entries');
+        res.json({ logs });
+        
+    } catch (error) {
+        console.error('Failed to load logs:', {
+            message: error.message,
+            code: error.code,
+            sqlMessage: error.sqlMessage,
+            sql: error.sql,
+            stack: error.stack
+        });
+        
+        // More specific error handling
+        if (error.code === 'ER_NO_SUCH_TABLE') {
+            return res.status(500).json({ 
+                message: 'Database table error',
+                error: 'The user_logins table does not exist or is not accessible',
+                code: error.code
+            });
+        }
+        
+        res.status(500).json({ 
+            message: 'Failed to load user logs', 
+            error: error.message,
+            code: error.code,
+            sqlMessage: error.sqlMessage,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    } finally {
+        // Always release the connection back to the pool
+        if (connection) {
+            await connection.release();
+        }
     }
 });
 

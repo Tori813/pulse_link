@@ -59,6 +59,11 @@ app.get('/dashboard.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
+// Serve settings page
+app.get('/settings.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'settings.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('=== Error Start ===');
